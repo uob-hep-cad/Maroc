@@ -10,11 +10,18 @@ library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
 
 use work.ipbus.ALL;
+use work.fiveMaroc.all;
 
 entity top is port(
 		osc_clk: in std_logic;
 		leds: out std_logic_vector(3 downto 0); -- Enclustra status LEDs
 		phy_rstn: out std_logic; -- PHY reset
+          rgmii_txd: out std_logic_vector(3 downto 0);
+          rgmii_tx_ctl: out std_logic;
+          rgmii_txc: out std_logic;
+          rgmii_rxd: in std_logic_vector(3 downto 0);
+          rgmii_rx_ctl: in std_logic;
+          rgmii_rxc: in std_logic;
 
        dip_switch: in std_logic_vector(3 downto 0); -- CHANGEME - No DIP switches on Enclustra
         -- Connections to MAROC
@@ -139,28 +146,28 @@ begin
         	HOLD1_2V5 => HOLD1_2V5,
         	OR1_2V5 => OR1_2V5,
         	OR0_2V5 => OR0_2V5,
-			EN_OTAQ_2V5: => EN_OTAQ_2V5, 
-			CTEST_2V5: => CTEST_2V5, 
-			ADC_DAV_2V5: => ADC_DAV_2V5, 
-			OUT_ADC_2V5: => OUT_ADC_2V5, 
-			START_ADC_2V5_N: => START_ADC_2V5_N, 
-			RST_ADC_2V5_N: => RST_ADC_2V5_N, 
-			RST_SC_2V5_N: => RST_SC_2V5_N, 
-			Q_SC_2V5: => Q_SC_2V5, 
-			D_SC_2V5: => D_SC_2V5, 
-			RST_R_2V5_N: => RST_R_2V5_N, 
-			Q_R_2V5: => Q_R_2V5, 
-			D_R_2V5: => D_R_2V5, 
-			CK_R_2V5: => CK_R_2V5, 
-			CK_SC_2V5: => CK_SC_2V5, 
+			EN_OTAQ_2V5 => EN_OTAQ_2V5, 
+			CTEST_2V5 => CTEST_2V5, 
+			ADC_DAV_2V5 => ADC_DAV_2V5, 
+			OUT_ADC_2V5 => OUT_ADC_2V5, 
+			START_ADC_2V5_N => START_ADC_2V5_N, 
+			RST_ADC_2V5_N => RST_ADC_2V5_N, 
+			RST_SC_2V5_N => RST_SC_2V5_N, 
+			Q_SC_2V5 => Q_SC_2V5, 
+			D_SC_2V5 => D_SC_2V5, 
+			RST_R_2V5_N => RST_R_2V5_N, 
+			Q_R_2V5 => Q_R_2V5, 
+			D_R_2V5 => D_R_2V5, 
+			CK_R_2V5 => CK_R_2V5, 
+			CK_SC_2V5 => CK_SC_2V5, 
         -- lines to select marocs for setup and control
-			MAROC_SELECT_2V5: => MAROC_SELECT_2V5,
+			MAROC_SELECT_2V5 => MAROC_SELECT_2V5,
         -- HDMI signals for Clock and trigger I/O
         -- For tests declare all as output
-			HDMI0_CLK_P: => HDMI0_CLK_P, 
-			HDMI0_CLK_N: => HDMI0_CLK_N, 
-			HDMI0_DATA_P: => HDMI0_DATA_P, 
-			HDMI0_DATA_N: => HDMI0_DATA_N, 
+			HDMI0_CLK_P => HDMI0_CLK_P, 
+			HDMI0_CLK_N => HDMI0_CLK_N, 
+			HDMI0_DATA_P => HDMI0_DATA_P, 
+			HDMI0_DATA_N => HDMI0_DATA_N, 
         --HDMI1_CLK_P: in std_logic;
         --HDMI1_CLK_N: in std_logic;        
         --HDMI1_DATA_P: in std_logic_vector(2 downto 0);

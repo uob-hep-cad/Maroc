@@ -108,8 +108,8 @@ begin
   fabric: entity work.ipbus_fabric
     generic map(NSLV => NSLV )
     port map(
-      ipb_clk => ipb_clk,
-      rst => rst,
+--      ipb_clk => ipb_clk,
+--      rst => rst,
       ipb_in => ipb_in,
       ipb_out => ipb_out,
       ipb_to_slaves => ipbw,
@@ -119,8 +119,8 @@ begin
   --! Slave 0: firmware ID etc
   slave0: entity work.ipbus_ver
     port map(
-      ipbus_in => ipbw(0),
-      ipbus_out => ipbr(0));
+      ipbus_in => ipbw(N_SLV_FIRMWAREID),
+      ipbus_out => ipbr(N_SLV_FIRMWAREID));
 
   --! Slave 1: 32b register ( output from FPGA to MAROC)
   slave1: entity work.ipbus_reg
@@ -128,8 +128,8 @@ begin
     port map(
       clk => ipb_clk,
       reset => rst,
-      ipbus_in => ipbw(1),
-      ipbus_out => ipbr(1),
+      ipbus_in => ipbw(N_SLV_GPIO),
+      ipbus_out => ipbr(N_SLV_GPIO),
       q => register_data
       );
 
@@ -139,8 +139,8 @@ begin
     port map(
       clk => ipb_clk,
       reset => rst,
-      ipbus_in => ipbw(2),
-      ipbus_out => ipbr(2),
+      ipbus_in => ipbw(N_SLV_SELECT),
+      ipbus_out => ipbr(N_SLV_SELECT),
       q => s_marocSelect
       );
   
@@ -152,8 +152,8 @@ begin
     port map(
       clk => ipb_clk,
       reset => rst,
-      ipbus_in => ipbw(3),
-      ipbus_out => ipbr(3),
+      ipbus_in => ipbw(N_SLV_MASK),
+      ipbus_out => ipbr(N_SLV_MASK),
       q => s_marocMask  
       );
 
@@ -161,8 +161,8 @@ begin
   slave4: entity work.ipbus_pulseout_datain
   port map (
     clk => ipb_clk,
-    ipbus_in => ipbw(4),
-    ipbus_out => ipbr(4),
+    ipbus_in => ipbw(N_SLV_CONTROLREG),
+    ipbus_out => ipbr(N_SLV_CONTROLREG),
     q_out => s_pulsed_lines,
     d_in => s_clock_status
     );
@@ -205,8 +205,8 @@ begin
       -- signals to IPBus
       clk_i => ipb_clk,
       reset_i  => rst,
-      ipbus_i  => ipbw(5),
-      ipbus_o  => ipbr(5),
+      ipbus_i  => ipbw(N_SLV_SCSR),
+      ipbus_o  => ipbr(N_SLV_SCSR),
 
       -- Signals to MAROC
       clk_sr_o => maroc_input_signals.ck_sc_2v5,
@@ -228,8 +228,8 @@ begin
       -- signals to IPBus
       clk_i => ipb_clk,
       reset_i  => rst,
-      ipbus_i  => ipbw(6),
-      ipbus_o  => ipbr(6),
+      ipbus_i  => ipbw(N_SLV_RSR),
+      ipbus_o  => ipbr(N_SLV_RSR),
 
       -- Signals to MAROC
       clk_sr_o => maroc_input_signals.ck_r_2v5,
@@ -246,8 +246,8 @@ begin
       -- signals to IPBus
       clk_i => ipb_clk,
       reset_i  => rst,
-      control_ipbus_i  => ipbw(7),
-      control_ipbus_o  => ipbr(7),
+      control_ipbus_i  => ipbw(N_SLV_TRIGGER),
+      control_ipbus_o  => ipbr(N_SLV_TRIGGER),
       data_ipbus_i  => ipbw(8),
       data_ipbus_o  => ipbr(8),
 
@@ -321,11 +321,12 @@ begin
         -- signals to IPBus
         clk_i => ipb_clk,
         reset_i  => rst,
-        control_ipbus_i  => ipbw( (2*iMaroc) +10),
-        control_ipbus_o  => ipbr( (2*iMaroc) +10),
+        
+        control_ipbus_i  => ipbw( (2*iMaroc) + N_SLV_ADC0CTRL),
+        control_ipbus_o  => ipbr( (2*iMaroc) + N_SLV_ADC0CTRL),
 
-        data_ipbus_i     => ipbw( (2*iMaroc) +11),
-        data_ipbus_o     => ipbr( (2*iMaroc) +11),
+        data_ipbus_i     => ipbw( (2*iMaroc) + N_SLV_ADC0DATA),
+        data_ipbus_o     => ipbr( (2*iMaroc) + N_SLV_ADC0DATA),
 
         logic_reset_i => s_logic_reset,
 

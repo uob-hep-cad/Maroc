@@ -4,7 +4,7 @@ src ipbusMarocShiftReg_rtl.vhd
 src ipbusMarocADC_rtl.vhd
 src marocADC_rtl.vhd
 src marocADCFSM_rtl.vhd
-src dpram.vhdl
+src dpram.vhd
 src counterWithReset_rtl.vhd
 src ipbus_addr_decode.vhd
 src slaves_5maroc.vhd

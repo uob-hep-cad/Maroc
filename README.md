@@ -1,6 +1,11 @@
 # Maroc
 Firmware and support scripts to read out pc043 5-Maroc board.
 
+To setup Xilinx software environment (Vivado) on Bristol Linux PCs:
+```
+. /software/CAD/Xilinx/2019.2/Vivado/2019.2/settings64.sh
+```
+
 To build the firmware:
 
 ```

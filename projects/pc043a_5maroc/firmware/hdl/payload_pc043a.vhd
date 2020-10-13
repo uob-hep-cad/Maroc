@@ -244,11 +244,7 @@ begin
 		ipb_in => ipb_master_out,
 		ipb_out => ipb_master_in,
 
-
-                --- Get rid of hostbus
-                hostbus_out => hostbus_in,
-		hostbus_in => hostbus_out,
-                
+               
                 clock_status => clock_status,
                 -- Top level ports from here
                 clk_fast_i => clk_fast,

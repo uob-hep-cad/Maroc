@@ -14,7 +14,8 @@ library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
 use IEEE.numeric_std.ALL;
 use work.ipbus.ALL;
-use work.emac_hostbus_decl.all;
+use work.ipbus_decode_top_pc043.all;
+
 use work.fiveMaroc.all;
 
 Library UNISIM;
@@ -24,8 +25,6 @@ entity slaves_5maroc is port(
 	ipb_clk, ipb_clk_n , rst : in STD_LOGIC;
 	ipb_in : in ipb_wbus;
 	ipb_out : out ipb_rbus;
-        hostbus_out: out emac_hostbus_in;
-	hostbus_in: in emac_hostbus_out;
         clock_status: in std_logic_vector(c_NCLKS+1 downto 0); -- status of clock lines. Connect to IPBus
 
 -- Top level ports from here
@@ -107,7 +106,7 @@ begin
   --   );
           
   fabric: entity work.ipbus_fabric
-    generic map(NSLV => NSLV)
+    generic map(NSLV => NSLV, SEL_WIDTH => IPBUS_SEL_WIDTH )
     port map(
       ipb_clk => ipb_clk,
       rst => rst,
@@ -346,15 +345,7 @@ begin
     end generate maroc_adc;
 
   -- Slave 13: MAC host interface
-  slave13: entity work.ipbus_emac_hostbus
-    port map(
-      clk => ipb_clk,
-      reset => rst,
-      ipbus_in => ipbw(9),
-      ipbus_out => ipbr(9),
-      hostbus_out => hostbus_out,
-      hostbus_in => hostbus_in);
-
+  -- Redundant. Removed.
 
     -- connect up output from MAROC to GPIO pins...
 -- ( connect up 0-2 at top level )

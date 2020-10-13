@@ -1,5 +1,5 @@
 src payload_pc043a.vhd
-src ipbus_decode_top_pc043a.vhd
+# src ipbus_decode_top_pc043a.vhd
 addrtab -t top_pc043a.xml
 addrtab shift_reg.xml
 addrtab trigger.xml

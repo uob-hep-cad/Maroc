@@ -12,7 +12,10 @@ src ipbusFiveMarocTriggerGenerator_rtl.vhd
 src 5maroc_pkg.vhd
 src fiveMarocTriggerGenerator_rtl.vhd
 src maroc_pkg.vhd
-src generate_hdmi.vhd
+src -c projects/pc043a_5maroc ipbus_decode_top_pc043a.vhd
+
+# Uncomment to include HDMI debugging signals ( change slaves_5maroc )
+#src generate_hdmi.vhd
 
 # CHANGEME
 # IPBus .... put into a separate directory: components/ipbus

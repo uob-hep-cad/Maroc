@@ -21,7 +21,6 @@ use IEEE.STD_LOGIC_1164.ALL;
 use work.ipbus.ALL;
 use work.ipbus_bus_decl.all;
 use work.fiveMaroc.all;
-use work.emac_hostbus_decl.all;
 
 Library UNISIM;
 use UNISIM.vcomponents.all;
@@ -38,11 +37,6 @@ entity payload is
     soft_rst: out std_logic;
     userled: out std_logic;
     clk125: in std_logic;
-    clk_p: in std_logic;
--- 50MHz master clock from PLL
-    clk_n: in std_logic;
-    rstb_clk: out std_logic;
-
                                                                                                                                                                                    
 	sysclk : in STD_LOGIC;
 	leds: out STD_LOGIC_VECTOR(3 downto 0);

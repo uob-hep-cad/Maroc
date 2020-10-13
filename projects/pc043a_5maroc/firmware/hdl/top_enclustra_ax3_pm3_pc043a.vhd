@@ -30,15 +30,15 @@ entity top is port(
         -- CK_40M_OUT_2V5: in STD_LOGIC; -- not currently used
         HOLD2_2V5: out STD_LOGIC;
         HOLD1_2V5: out STD_LOGIC;
-        OR1_2V5: in STD_LOGIC_VECTOR(g_NMAROC-1 downto 0);
-        OR0_2V5: in STD_LOGIC_VECTOR(g_NMAROC-1 downto 0);
+        OR1_2V5: in STD_LOGIC_VECTOR(c_NMAROC-1 downto 0);
+        OR0_2V5: in STD_LOGIC_VECTOR(c_NMAROC-1 downto 0);
         -- bodge for now, just to get code to build
 --        OR1_2V5: in STD_LOGIC_VECTOR(g_NMAROC-2 downto 0);
 --        OR0_2V5: in STD_LOGIC_VECTOR(g_NMAROC-2 downto 0);
         EN_OTAQ_2V5: out STD_LOGIC;
         CTEST_2V5: out STD_LOGIC;
-        ADC_DAV_2V5: in STD_LOGIC_VECTOR(g_NMAROC-1 downto 0);
-        OUT_ADC_2V5: in STD_LOGIC_VECTOR(g_NMAROC-1 downto 0);
+        ADC_DAV_2V5: in STD_LOGIC_VECTOR(c_NMAROC-1 downto 0);
+        OUT_ADC_2V5: in STD_LOGIC_VECTOR(c_NMAROC-1 downto 0);
         START_ADC_2V5_N: out STD_LOGIC;
         RST_ADC_2V5_N: out STD_LOGIC;
         RST_SC_2V5_N: out STD_LOGIC;
@@ -131,10 +131,7 @@ begin
 			soft_rst => soft_rst,
 			userled => userled,
 			clk125 => clk125,
-			clk_p => clk_p,
-			clk_n => clk_n,
-			rstb_clk => rstb_clk,
-			
+		
       		sysclk => osc_clk,
         	leds => leds,
 
@@ -177,7 +174,11 @@ begin
         --HDMI1_DATA_P: inout std_logic_vector(2 downto 0);
         --HDMI1_DATA_N: inout std_logic_vector(2 downto 0);
 			HDMI1_SIGNALS_P => HDMI1_SIGNALS_P , 
-			HDMI1_SIGNALS_N => HDMI1_SIGNALS_N 
+			HDMI1_SIGNALS_N => HDMI1_SIGNALS_N, 
+		
+		  	GPIO_HDR_O => GPIO_HDR_O,
+            GPIO_HDR_I => GPIO_HDR_I
+        
 			
 		);
 

@@ -1,5 +1,5 @@
 --=============================================================================
---! @file clocks_s6_extclk_multiclk_xtal.vhd
+--! @file clocks_a7_extclk_multiclk_xtal.vhd
 --=============================================================================
 --@brief Generates a 500MHz clock for sampling input, 250MHz clock for trigger
 --!logic, 31.25MHz ipbus clock from a 25MHz reference
@@ -24,8 +24,7 @@ entity clocks_a7_extclk_multiclk_xtal is
     (-- Clock in ports
       extclk_P         : in     std_logic;
       extclk_N         : in     std_logic;
-      sysclk_P         : in     std_logic;
-      sysclk_N         : in     std_logic;
+      sysclk           : in     std_logic;
       -- Clock out ports
       clko_125          : out    std_logic;
       clko_ipb          : out    std_logic;
@@ -44,7 +43,7 @@ end clocks_a7_extclk_multiclk_xtal;
 architecture rtl of clocks_a7_extclk_multiclk_xtal is
 
   -- Input clock buffering / unused connectors
-  signal extclk,sysclk      : std_logic;
+  signal extclk     : std_logic;
   -- Output clock buffering / unused connectors
   signal clkfbout         : std_logic;
   signal clk_125_s          : std_logic;
@@ -72,6 +71,7 @@ architecture rtl of clocks_a7_extclk_multiclk_xtal is
 
 begin
 
+
   -- Input buffering for external clock ( on HDMI cable)
   --------------------------------------
   extclk_buf : IBUFGDS
@@ -89,8 +89,8 @@ begin
   pll_base_inst0 : PLLE2_BASE
   generic map
     (BANDWIDTH            => "OPTIMIZED",
-    -- CLK_FEEDBACK         => "CLKFBOUT",
-    -- COMPENSATION         => "SYSTEM_SYNCHRONOUS",
+    CLK_FEEDBACK         => "CLKFBOUT",
+    COMPENSATION         => "SYSTEM_SYNCHRONOUS",
     DIVCLK_DIVIDE        => 1,
     CLKFBOUT_MULT        => 20,
     CLKFBOUT_PHASE       => 0.000,
@@ -124,7 +124,7 @@ begin
     RST                 => '0',
     -- Input clock control
     CLKFBIN             => clkfbout, -- s_clkfbin_buf,
-    CLKIN1               => extclk);
+    CLKIN               => extclk);
 
   -- Feedback buffer
   -----------------------------------------------------------------------------
@@ -181,13 +181,8 @@ begin
   -------------------------------------------------------------------------
   -- 125MHz clock for Ethernet interface.
 
-    -- differential buffer for the xtal on-board clock.
-  sysclk_buf : IBUFGDS
-    port map
-    (O  => sysclk,
-     I  => sysclk_P,
-     IB => sysclk_N);
 
+  -- CHANGEME - update Spartan6 primitive to Artix 7
   dcm0: DCM_CLKGEN
     generic map(
       CLKIN_PERIOD => 5.0,

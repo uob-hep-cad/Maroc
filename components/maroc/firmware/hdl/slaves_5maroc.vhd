@@ -14,7 +14,7 @@ library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
 use IEEE.numeric_std.ALL;
 use work.ipbus.ALL;
-use work.ipbus_decode_top_pc043.all;
+use work.ipbus_decode_top_pc043a.all;
 
 use work.fiveMaroc.all;
 

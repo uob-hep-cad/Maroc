@@ -44,7 +44,7 @@ entity payload is
     rstb_clk: out std_logic;
 
                                                                                                                                                                                    
-	sysclk_p, sysclk_n : in STD_LOGIC;
+	sysclk : in STD_LOGIC;
 	leds: out STD_LOGIC_VECTOR(3 downto 0);
 
         -- Connections to MAROC
@@ -217,8 +217,7 @@ begin
           port map(
           extclk_p => HDMI0_CLK_P,
           extclk_n => HDMI0_CLK_N,
-          sysclk_p => sysclk_p,
-          sysclk_n => sysclk_n,
+          sysclk   => sysclk,
           clko_125 => clk125,
           clko_fast => clk_fast,
           clko_2x_fast  => clk_2x_fast,

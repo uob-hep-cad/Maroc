@@ -14,42 +14,58 @@ use work.ipbus.ALL;
 entity top is port(
 		osc_clk: in std_logic;
 		leds: out std_logic_vector(3 downto 0); -- Enclustra status LEDs
-		rgmii_txd: out std_logic_vector(3 downto 0); -- Enclustra ethernet
-		rgmii_tx_ctl: out std_logic;
-		rgmii_txc: out std_logic;
-		rgmii_rxd: in std_logic_vector(3 downto 0);
-		rgmii_rx_ctl: in std_logic;
-		rgmii_rxc: in std_logic;
 		phy_rstn: out std_logic; -- PHY reset
-		clk_p: in std_logic; -- 50MHz master clock from PLL
-		clk_n: in std_logic;
-		rstb_clk: out std_logic; -- reset for PLL
-		clk_lolb: in std_logic; -- PLL LOL
-		trig_in_p: in std_logic_vector(5 downto 0);
-		trig_in_n: in std_logic_vector(5 downto 0);
-		q_hdmi_clk_0: out std_logic;
-		q_hdmi_clk_1: out std_logic;
-		q_hdmi_clk_2: out std_logic;
-		q_hdmi_clk_3: out std_logic;		
-		q_hdmi_0: out std_logic; -- output to downstream HDMI 0
-		q_hdmi_0b: out std_logic;
-		q_hdmi_1: out std_logic; -- output to downstream HDMI 1
-		q_hdmi_1b: out std_logic;
-		q_hdmi_2: out std_logic; -- output to upstream HDMI 2
-		q_hdmi_3: out std_logic; -- output to downstream HDMI 3
-		d_hdmi_2: in std_logic;
-		q_sfp_p: out std_logic;
-		q_sfp_n: out std_logic;
-		d_cdr_p: in std_logic;
-		d_cdr_n: in std_logic;
-		sfp_los: in std_logic;
-		sfp_fault: in std_logic;
-		sfp_tx_dis: out std_logic;
-		cdr_lol: in std_logic;
-		cdr_los: in std_logic;
-		scl: out std_logic; -- main I2C
-		sda: inout std_logic;
-		rstb_i2c: out std_logic -- reset for I2C expanders
+
+       dip_switch: in std_logic_vector(3 downto 0); -- CHANGEME - No DIP switches on Enclustra
+        -- Connections to MAROC
+        CK_40M_P: out STD_LOGIC;
+        CK_40M_N: out STD_LOGIC;
+        -- CK_40M_OUT_2V5: in STD_LOGIC; -- not currently used
+        HOLD2_2V5: out STD_LOGIC;
+        HOLD1_2V5: out STD_LOGIC;
+        OR1_2V5: in STD_LOGIC_VECTOR(g_NMAROC-1 downto 0);
+        OR0_2V5: in STD_LOGIC_VECTOR(g_NMAROC-1 downto 0);
+        -- bodge for now, just to get code to build
+--        OR1_2V5: in STD_LOGIC_VECTOR(g_NMAROC-2 downto 0);
+--        OR0_2V5: in STD_LOGIC_VECTOR(g_NMAROC-2 downto 0);
+        EN_OTAQ_2V5: out STD_LOGIC;
+        CTEST_2V5: out STD_LOGIC;
+        ADC_DAV_2V5: in STD_LOGIC_VECTOR(g_NMAROC-1 downto 0);
+        OUT_ADC_2V5: in STD_LOGIC_VECTOR(g_NMAROC-1 downto 0);
+        START_ADC_2V5_N: out STD_LOGIC;
+        RST_ADC_2V5_N: out STD_LOGIC;
+        RST_SC_2V5_N: out STD_LOGIC;
+        Q_SC_2V5: in STD_LOGIC;
+        D_SC_2V5: out STD_LOGIC;
+        RST_R_2V5_N: out STD_LOGIC;
+        Q_R_2V5: in STD_LOGIC;
+        D_R_2V5: out STD_LOGIC;
+        CK_R_2V5: out STD_LOGIC;
+        CK_SC_2V5: out STD_LOGIC;
+        -- lines to select marocs for setup and control
+        MAROC_SELECT_2V5: out STD_LOGIC_VECTOR(2 downto 0);
+        -- HDMI signals for Clock and trigger I/O
+        -- For tests declare all as output
+        HDMI0_CLK_P: in std_logic;      -- Need an input clock of 40MHz on J28
+        HDMI0_CLK_N: in std_logic;
+        HDMI0_DATA_P: in std_logic_vector(2 downto 0);
+        HDMI0_DATA_N: in std_logic_vector(2 downto 0);
+        --HDMI1_CLK_P: in std_logic;
+        --HDMI1_CLK_N: in std_logic;        
+        --HDMI1_DATA_P: in std_logic_vector(2 downto 0);
+        --HDMI1_DATA_N: in std_logic_vector(2 downto 0);
+        --HDMI1_CLK_P: inout std_logic;
+        --HDMI1_CLK_N: inout std_logic;        
+        --HDMI1_DATA_P: inout std_logic_vector(2 downto 0);
+        --HDMI1_DATA_N: inout std_logic_vector(2 downto 0);
+        HDMI1_SIGNALS_P : inout std_logic_vector(3 downto 0);
+        HDMI1_SIGNALS_N : inout std_logic_vector(3 downto 0);
+        
+        -- GPIO header for debugging:
+        GPIO_HDR_O: out STD_LOGIC_VECTOR(5 downto 0); -- CHANGEME - No GPIO on Enclustra
+        GPIO_HDR_I: in STD_LOGIC_VECTOR(7 downto 6)   -- CHANGEME - No GPIO on Enclustra
+
+
 	);
 
 end top;
@@ -99,9 +115,6 @@ begin
 -- The ipbus fabric is instantiated within.
 
 	slaves: entity work.payload
-		generic map(
-			CARRIER_TYPE => X"00"
-		)
 		port map(
 			ipb_clk => clk_ipb,
 			ipb_rst => rst_ipb,
@@ -114,32 +127,51 @@ begin
 			clk_p => clk_p,
 			clk_n => clk_n,
 			rstb_clk => rstb_clk,
-			clk_lolb => clk_lolb,
-			trig_in_p => trig_in_p,
-			trig_in_n => trig_in_n,
-			q_hdmi_clk_0 => q_hdmi_clk_0,
-			q_hdmi_clk_1 => q_hdmi_clk_1,
-			q_hdmi_clk_2 => q_hdmi_clk_2,
-			q_hdmi_clk_3 => q_hdmi_clk_3,			
-			q_hdmi_0 => q_hdmi_0,
-			q_hdmi_0b => q_hdmi_0b,
-			q_hdmi_1 => q_hdmi_1,
-			q_hdmi_1b => q_hdmi_1b,
-			q_hdmi_2 => q_hdmi_2,
-			q_hdmi_3 => q_hdmi_3,
-			d_hdmi_2 => d_hdmi_2,
-			q_sfp_p => q_sfp_p,
-			q_sfp_n => q_sfp_n,
-			d_cdr_p => d_cdr_p,
-			d_cdr_n => d_cdr_n,
-			sfp_los => sfp_los,
-			sfp_fault => sfp_fault,
-			sfp_tx_dis => sfp_tx_dis,
-			cdr_lol => cdr_lol,
-			cdr_los => cdr_los,
-			scl => scl,
-			sda => sda,
-			rstb_i2c => rstb_i2c
+			
+      		sysclk => osc_clk,
+        	leds => leds,
+
+        	-- Connections to MAROC
+        	CK_40M_P => CK_40M_P,
+        	CK_40M_N => CK_40M_N,
+           	-- CK_40M_OUT_2V5: in STD_LOGIC; -- not currently used
+        	HOLD2_2V5 => HOLD2_2V5,
+        	HOLD1_2V5 => HOLD1_2V5,
+        	OR1_2V5 => OR1_2V5,
+        	OR0_2V5 => OR0_2V5,
+			EN_OTAQ_2V5: => EN_OTAQ_2V5, 
+			CTEST_2V5: => CTEST_2V5, 
+			ADC_DAV_2V5: => ADC_DAV_2V5, 
+			OUT_ADC_2V5: => OUT_ADC_2V5, 
+			START_ADC_2V5_N: => START_ADC_2V5_N, 
+			RST_ADC_2V5_N: => RST_ADC_2V5_N, 
+			RST_SC_2V5_N: => RST_SC_2V5_N, 
+			Q_SC_2V5: => Q_SC_2V5, 
+			D_SC_2V5: => D_SC_2V5, 
+			RST_R_2V5_N: => RST_R_2V5_N, 
+			Q_R_2V5: => Q_R_2V5, 
+			D_R_2V5: => D_R_2V5, 
+			CK_R_2V5: => CK_R_2V5, 
+			CK_SC_2V5: => CK_SC_2V5, 
+        -- lines to select marocs for setup and control
+			MAROC_SELECT_2V5: => MAROC_SELECT_2V5,
+        -- HDMI signals for Clock and trigger I/O
+        -- For tests declare all as output
+			HDMI0_CLK_P: => HDMI0_CLK_P, 
+			HDMI0_CLK_N: => HDMI0_CLK_N, 
+			HDMI0_DATA_P: => HDMI0_DATA_P, 
+			HDMI0_DATA_N: => HDMI0_DATA_N, 
+        --HDMI1_CLK_P: in std_logic;
+        --HDMI1_CLK_N: in std_logic;        
+        --HDMI1_DATA_P: in std_logic_vector(2 downto 0);
+        --HDMI1_DATA_N: in std_logic_vector(2 downto 0);
+        --HDMI1_CLK_P: inout std_logic;
+        --HDMI1_CLK_N: inout std_logic;        
+        --HDMI1_DATA_P: inout std_logic_vector(2 downto 0);
+        --HDMI1_DATA_N: inout std_logic_vector(2 downto 0);
+			HDMI1_SIGNALS_P => HDMI1_SIGNALS_P , 
+			HDMI1_SIGNALS_N => HDMI1_SIGNALS_N 
+			
 		);
 
 end rtl;

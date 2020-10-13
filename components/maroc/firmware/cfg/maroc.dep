@@ -7,7 +7,7 @@ src marocADCFSM_rtl.vhd
 # src dpram.vhd
 src counterWithReset_rtl.vhd
 
-src slaves_5maroc.vhd
+src --vhdl2008 slaves_5maroc.vhd
 src ipbusFiveMarocTriggerGenerator_rtl.vhd
 src 5maroc_pkg.vhd
 src fiveMarocTriggerGenerator_rtl.vhd

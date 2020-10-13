@@ -211,7 +211,7 @@ begin
         ---- **** CHANGE ME ******
 --	DCM clock generation for internal bus, ethernet
 	--clocks: entity work.clocks_s6_extclk port map(
-        clocks: entity work.clocks_s6_extclk_multiclk_xtal
+        clocks: entity work.clocks_a7_extclk_multiclk_xtal
           generic map (
             g_NCLKS => c_NCLKS)
           port map(

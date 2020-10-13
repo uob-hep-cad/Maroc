@@ -17,7 +17,7 @@ use ieee.numeric_std.all;
 library unisim;
 use unisim.vcomponents.all;
 
-entity clocks_s6_extclk_multiclk_xtal is
+entity clocks_a7_extclk_multiclk_xtal is
   generic (
     g_NCLKS : positive := 3);  -- number of clocks to generate for input deserializers
   port
@@ -39,9 +39,9 @@ entity clocks_s6_extclk_multiclk_xtal is
       rsto_ipb         : out    std_logic;
       onehz            : out    std_logic
  );
-end clocks_s6_extclk_multiclk_xtal;
+end clocks_a7_extclk_multiclk_xtal;
 
-architecture rtl of clocks_s6_extclk_multiclk_xtal is
+architecture rtl of clocks_a7_extclk_multiclk_xtal is
 
   -- Input clock buffering / unused connectors
   signal extclk,sysclk      : std_logic;
@@ -72,7 +72,6 @@ architecture rtl of clocks_s6_extclk_multiclk_xtal is
 
 begin
 
-
   -- Input buffering for external clock ( on HDMI cable)
   --------------------------------------
   extclk_buf : IBUFGDS
@@ -90,8 +89,8 @@ begin
   pll_base_inst0 : PLLE2_BASE
   generic map
     (BANDWIDTH            => "OPTIMIZED",
-    CLK_FEEDBACK         => "CLKFBOUT",
-    COMPENSATION         => "SYSTEM_SYNCHRONOUS",
+    -- CLK_FEEDBACK         => "CLKFBOUT",
+    -- COMPENSATION         => "SYSTEM_SYNCHRONOUS",
     DIVCLK_DIVIDE        => 1,
     CLKFBOUT_MULT        => 20,
     CLKFBOUT_PHASE       => 0.000,
@@ -125,7 +124,7 @@ begin
     RST                 => '0',
     -- Input clock control
     CLKFBIN             => clkfbout, -- s_clkfbin_buf,
-    CLKIN               => extclk);
+    CLKIN1               => extclk);
 
   -- Feedback buffer
   -----------------------------------------------------------------------------

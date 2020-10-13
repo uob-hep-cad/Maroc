@@ -106,7 +106,7 @@ begin
   --   );
           
   fabric: entity work.ipbus_fabric
-    generic map(NSLV => NSLV, SEL_WIDTH => IPBUS_SEL_WIDTH )
+    generic map(NSLV => NSLV )
     port map(
       ipb_clk => ipb_clk,
       rst => rst,

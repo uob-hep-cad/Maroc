@@ -1,0 +1,16 @@
+<node id="TOP">
+	<node id="FirmwareId"	address="0x00000000"	fwinfo="endpoint;width=0"/>
+	<node id="GPIO"			address="0x00000001"    fwinfo="endpoint;width=0"/>
+	<node id="select"		address="0x00000002"    fwinfo="endpoint;width=0"/>
+	<node id="mask"			address="0x00000003"    fwinfo="endpoint;width=0"/>
+	<node id="controlReg"	address="0x00000004"    fwinfo="endpoint;width=0"/>
+	<node id="scSr" 		address="0x0100" module="file://shift_reg.xml"/>
+    <node id="rSr" 			address="0x0100" module="file://shift_reg.xml"/>
+    <node id="trigger" 		address="0x7000" module="file://trigger.xml"/>
+    <node id="adc0" 		address="0x1000" module="file://adc.xml"/>
+    <node id="adc1" 		address="0x2000" module="file://adc.xml"/>
+    <node id="adc2" 		address="0x3000" module="file://adc.xml"/>
+    <node id="adc3" 		address="0x4000" module="file://adc.xml"/>
+    <node id="adc4" 		address="0x5000" module="file://adc.xml"/>
+</node>
+

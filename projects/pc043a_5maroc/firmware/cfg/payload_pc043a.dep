@@ -1,6 +1,9 @@
 src payload_pc043a.vhd
 src ipbus_decode_top_pc043a.vhd
 addrtab -t top_pc043a.xml
+addrtab shift_reg.xml
+addrtab trigger.xml
+addrtab adc.xml
 src -c ipbus-firmware:components/ipbus_core ipbus_fabric_sel.vhd
 src -c ipbus-firmware:components/ipbus_core ipbus_package.vhd
 include -c components/maroc maroc.dep

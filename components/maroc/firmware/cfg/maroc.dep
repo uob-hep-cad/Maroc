@@ -20,6 +20,6 @@ src ipbus_ver.vhd
 src ipbus_reg.vhd
 src ipbus_pulseout_datain.vhd
 
-src clocks_a7_extclk_muticlk_xtal.vhd
+src clocks_a7_extclk_multiclk_xtal.vhd
 #src top_5maroc_extclk_sp601.vhd
 #src clocks_s6_extclk.vhd

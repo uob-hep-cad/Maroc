@@ -67,7 +67,7 @@ begin
   -- Clock out ports  
   clk_1x   => clk_1x_s,
   clk_8x   => clk_8x_s,
-  clk_8x   => clk_16x_s,
+  clk_16x   => clk_16x_s,
   -- Status and control signals               
   reset   => '0', 
   locked  => pll_locked,
@@ -80,7 +80,7 @@ begin
   -- 500MHz clock ( clk_2x_fast )
   -------------------------------------
 
-  clko_x8 <= clk_8x_s;
+  clko_8x <= clk_8x_s;
 
   gen_BUFIO: for iBUFIO in 0 to g_NCLKS-1 generate
     begin

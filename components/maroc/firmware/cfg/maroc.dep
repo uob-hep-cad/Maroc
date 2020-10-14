@@ -6,7 +6,9 @@ src marocADC_rtl.vhd
 src marocADCFSM_rtl.vhd
 # src dpram.vhd
 src counterWithReset_rtl.vhd
-
+src fineTimeStamp_rtl.vhd
+src multiCounterWithReset_rtl.vhd
+src neighbourTriggerIO_rtl.vhd
 src --vhdl2008 slaves_5maroc.vhd
 src ipbusFiveMarocTriggerGenerator_rtl.vhd
 src 5maroc_pkg.vhd
@@ -24,6 +26,7 @@ src ipbus_reg.vhd
 src ipbus_pulseout_datain.vhd
 
 src clocks_a7_extclk_multiclk_xtal.vhd
+src ../cgn/clk_adcs.xci
 src clock_divider_s6.v
 
 #src top_5maroc_extclk_sp601.vhd

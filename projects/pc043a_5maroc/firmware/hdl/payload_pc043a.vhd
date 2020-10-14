@@ -19,7 +19,7 @@
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
 use work.ipbus.ALL;
-use work.ipbus_bus_decl.all;
+-- use work.ipbus_bus_decl.all;
 use work.fiveMaroc.all;
 
 Library UNISIM;
@@ -93,7 +93,7 @@ end payload;
 
 architecture rtl of payload is
 
-	signal clk125, clk_fast, ipb_clk, ipb_clk_n , rst_125, rst_ipb, onehz : STD_LOGIC;
+	signal  clk_fast, ipb_clk_n , rst_125, rst_ipb, onehz : STD_LOGIC;
         signal clock_status : std_logic_vector(c_NCLKS+1 downto 0) := ( others => '0' );  --! locked/status lines for PLL, DCM, BUFPLLs
 	signal mac_txd, mac_rxd : STD_LOGIC_VECTOR(7 downto 0);
 	signal mac_txdvld, mac_txack, mac_rxclko, mac_rxdvld, mac_rxgoodframe, mac_rxbadframe : STD_LOGIC;
@@ -101,8 +101,6 @@ architecture rtl of payload is
 	signal ipb_master_in : ipb_rbus;
 	signal mac_addr: std_logic_vector(47 downto 0);
 	signal ip_addr: std_logic_vector(31 downto 0);
-	signal hostbus_in: emac_hostbus_in;
-	signal hostbus_out: emac_hostbus_out;
 
         -- Maroc signals
         signal ck_40M : std_logic;      -- 40Mhz clock for Maroc ADC
@@ -114,7 +112,6 @@ architecture rtl of payload is
         signal hdmi_output_signals : hdmi_output_signals;  -- record containing signals out of FPGA via HDMI connectors
         signal CK_40M_INT_P , CK_40M_INT_N : std_logic; 
 
-        signal sysclk : std_logic;      -- ! currently a dummy signal
         signal externalHdmiTrigger : std_logic;  -- ! Async trigger, via HDMI connector
         signal ck_25M_internally_generated, triggers_internally_generated : std_logic;
         --signal clk_2x_fast : std_logic; 
@@ -125,6 +122,7 @@ architecture rtl of payload is
          
 begin
 
+    ipb_clk_n <= not ipb_clk;
 
         ext_trig_buf :IBUFGDS
           port map
@@ -212,12 +210,12 @@ begin
           extclk_p => HDMI0_CLK_P,
           extclk_n => HDMI0_CLK_N,
           sysclk   => sysclk,
-          clko_125 => clk125,
+          --clko_125 => clk125,
           clko_fast => clk_fast,
           clko_2x_fast  => clk_2x_fast,
           clko_fast_strobe => clk_fast_strobe,
-          clko_ipb => ipb_clk,
-          clko_ipb_n => ipb_clk_n,
+          --clko_ipb => ipb_clk,
+          --clko_ipb_n => ipb_clk_n,
           clock_status => clock_status,
           rsto_125 => rst_125,
           rsto_ipb => rst_ipb,

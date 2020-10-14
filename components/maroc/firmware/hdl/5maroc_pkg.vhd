@@ -60,7 +60,7 @@ package fiveMaroc is
 
   constant c_NMAROC : integer := 5;     -- -! Number of MAROC chips
 
-  constant c_NCLKS : positive := 4;     -- Number of fast clocks for input deserializers
+  constant c_NCLKS : positive := 1;     -- Number of fast clocks for input deserializers
   
   type t_timestamp_array is array (0 to c_NMAROC-1) of std_logic_vector(c_BUSWIDTH-1 downto 0) ;
   type t_dual_timestamp_array is array (0 to (2*c_NMAROC)-1) of std_logic_vector(c_BUSWIDTH-1 downto 0);

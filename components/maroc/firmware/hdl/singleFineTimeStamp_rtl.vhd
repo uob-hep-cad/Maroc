@@ -89,7 +89,7 @@ begin  -- rtl
       data_i => trig_in_a_i,
       fastClk_i => clk_16x_i,
       fabricClk_i => clk_8x_i,
-      strobe_i => clk_8x_strobe_i,
+      -- strobe_i => clk_8x_strobe_i,
       data_o => parallel_data,
       serdes_ready_o => serdes_ready
       );

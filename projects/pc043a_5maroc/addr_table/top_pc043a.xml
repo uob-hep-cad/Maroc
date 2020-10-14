@@ -23,7 +23,8 @@
     <node id="adc4Data"     address="0x00005000" module="file://adcData.xml"/>
     <node id="adc4Ctrl"     address="0x00005200" module="file://adcCtrl.xml"/>
 
-   <node id="trigger"       address="0x00007000" module="file://trigger.xml"/>
+   <node id="triggerData"   address="0x00007200" module="file://triggerData.xml"/>
+   <node id="triggerCtrl"   address="0x00007000" module="file://triggerCtrl.xml"/>
 
 </node>
 

@@ -25,7 +25,9 @@ src -c projects/pc043a_5maroc ipbus_decode_top_pc043a.vhd
 # CHANGEME
 # IPBus .... put into a separate directory: components/ipbus
 src ipbus_ver.vhd
-src ipbus_reg.vhd
+# src ipbus_reg.vhd
+include -c ipbus-firmware:components/ipbus_slaves syncreg_v.dep
+
 src ipbus_pulseout_datain.vhd
 
 src clocks_a7_extclk_multiclk_xtal.vhd

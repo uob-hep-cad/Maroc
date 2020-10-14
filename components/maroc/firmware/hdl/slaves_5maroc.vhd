@@ -22,17 +22,18 @@ Library UNISIM;
 use UNISIM.vcomponents.all;
 
 entity slaves_5maroc is port(
-	ipb_clk, ipb_clk_n , rst : in STD_LOGIC;
+	ipb_clk : in STD_LOGIC;
+  clk_1x : in STD_LOGIC;
+  rst : in STD_LOGIC;
 	ipb_in : in ipb_wbus;
 	ipb_out : out ipb_rbus;
         clock_status: in std_logic_vector(c_NCLKS+1 downto 0); -- status of clock lines. Connect to IPBus
 
 -- Top level ports from here
-        clk_fast_i : in std_logic;
---        clk_2x_fast_i     : in    std_logic;  --! twice speed of fast clock
+        clk_8x_i : in std_logic; -- 8x speed of clk_i
+--        clk_8x_i     : in    std_logic;  --! twice speed of fast clock
 --        clk_fast_strobe_i : in    std_logic;  --! strobes every other clko_2x_fast cycle. Use for ISERDES
-        clk_2x_fast_i     : in    std_logic_vector(c_NCLKS-1 downto 0);  --! twice speed of fast clock
-        clk_fast_strobe_i : in    std_logic_vector(c_NCLKS-1 downto 0);  --! strobes every other clko_2x_fast cycle. Use for ISERDES
+        clk_16x_i     : in    std_logic_vector(c_NCLKS-1 downto 0);  --! 16x speed of clk_1. Use for ISERDES
  
 	gpio_o : out STD_LOGIC_VECTOR(5 downto 3);
         gpio_i : in  STD_LOGIC_VECTOR(7 downto 6);
@@ -123,38 +124,42 @@ begin
       ipbus_out => ipbr(N_SLV_FIRMWAREID));
 
   --! Slave 1: 32b register ( output from FPGA to MAROC)
-  slave1: entity work.ipbus_reg
-    generic map(addr_width => 0)
+  slave1: entity work.ipbus_syncreg_v
+    generic map(N_STAT => 0)
     port map(
       clk => ipb_clk,
+
       reset => rst,
       ipbus_in => ipbw(N_SLV_GPIO),
       ipbus_out => ipbr(N_SLV_GPIO),
-      q => register_data
+      slv_clk   => clk_1x,
+      q => (register_data)
       );
 
   --! Slave 2: 32b register ( maroc select lines)
-  slave2: entity work.ipbus_reg
-    generic map(addr_width => 0)
+  slave2: entity work.ipbus_syncreg_v
+    generic map(N_STAT => 0)
     port map(
       clk => ipb_clk,
       reset => rst,
       ipbus_in => ipbw(N_SLV_SELECT),
       ipbus_out => ipbr(N_SLV_SELECT),
-      q => s_marocSelect
+      slv_clk   => clk_1x,
+      q => (s_marocSelect)
       );
   
   maroc_input_signals.maroc_select <= s_marocSelect( maroc_input_signals.maroc_select'range);
 
     --! Slave 3: 32b register ( maroc mask lines)
-  slave3: entity work.ipbus_reg
-    generic map(addr_width => 0)
+  slave3: entity work.ipbus_syncreg_v
+    generic map(N_STAT => 0)
     port map(
       clk => ipb_clk,
       reset => rst,
       ipbus_in => ipbw(N_SLV_MASK),
       ipbus_out => ipbr(N_SLV_MASK),
-      q => s_marocMask  
+      slv_clk   => clk_1x,
+      q => (s_marocMask)  
       );
 
   -- Slave 4: reset signal
@@ -163,8 +168,9 @@ begin
     clk => ipb_clk,
     ipbus_in => ipbw(N_SLV_CONTROLREG),
     ipbus_out => ipbr(N_SLV_CONTROLREG),
-    q_out => s_pulsed_lines,
-    d_in => s_clock_status
+    slv_clk   => clk_1x,
+    q_out => (s_pulsed_lines),
+    d_in => (s_clock_status)
     );
 
   -- Copy clock_status to s_clock_status and pad with zeros.
@@ -191,7 +197,7 @@ begin
     end process p_sample_reset;
       
   -- connect up MAROC "40MHz" clock
-  maroc_input_signals.CK_40M <= ipb_clk;
+  maroc_input_signals.CK_40M <= clk_1x;
   
   --! Slave 5: slow control shift register controller
   slave5: entity work.ipbusMarocShiftReg
@@ -244,12 +250,13 @@ begin
       g_NCLKS => c_NCLKS)
     port map (
       -- signals to IPBus
-      clk_i => ipb_clk,
+      clk_i => clk_1x,
       reset_i  => rst,
-      control_ipbus_i  => ipbw(N_SLV_TRIGGER),
-      control_ipbus_o  => ipbr(N_SLV_TRIGGER),
-      data_ipbus_i  => ipbw(8),
-      data_ipbus_o  => ipbr(8),
+      ipb_clk  => ipb_clk,
+      control_ipbus_i  => ipbw(N_SLV_TRIGGERCTRL),
+      control_ipbus_o  => ipbr(N_SLV_TRIGGERCTRL),
+      data_ipbus_i  => ipbw(N_SLV_TRIGGERDATA),
+      data_ipbus_o  => ipbr(N_SLV_TRIGGERDATA),
 
       logic_reset_i => s_logic_reset,
       
@@ -260,9 +267,9 @@ begin
       timeStamp_o => s_timeStamp ,
 
       -- Fast clock and external trigger signals
-      clk_fast_i           => clk_fast_i,
-      clk_2x_fast_i        => clk_2x_fast_i,
-      clk_fast_strobe_i    => clk_fast_strobe_i,
+      clk_16x_i           => clk_16x_i,
+      clk_8x_i        => clk_8x_i,
+     
       externalHdmiTrigger_a_i  => externalHdmiTrigger_a_i,  -- use this for trigger on HDMI      
       externalGpioTrigger_a_i  => gpio_i(7),  -- use this for trigger on GPIO pins
       externalTrigger_o    => s_externalTrigger_o,
@@ -319,7 +326,8 @@ begin
       port map(
 
         -- signals to IPBus
-        clk_i => ipb_clk,
+        clk_i => clk_1x,
+        ipb_clk => ipb_clk
         reset_i  => rst,
         
         control_ipbus_i  => ipbw( (2*iMaroc) + N_SLV_ADC0CTRL),

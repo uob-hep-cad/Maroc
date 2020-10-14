@@ -75,7 +75,7 @@ use work.ipbus.all;
 --! 10/May/2013 DGC Moving to two IPBuses, one for control, one for data.
 -------------------------------------------------------------------------------
 --! @todo <next thing to do> \n
---! <another thing to do> \n
+--! CHANGEME - Protect all the clock crossing I introduced by separating clk_1x and ipb_clk  \n
 --
 ---------------------------------------------------------------------------------
 --
@@ -90,7 +90,8 @@ entity ipbusFiveMarocTriggerGenerator is
     g_NTRIGGER_SOURCES : positive := 7  -- ! Number of different trigger sources
     );
   port(
-    clk_i           : in  std_logic;
+    clk_1x_i           : in  std_logic;
+    ipb_clk_i         : in std_logic;
     reset_i         : in  std_logic;
     control_ipbus_i : in  ipb_wbus;
     control_ipbus_o : out ipb_rbus;
@@ -105,9 +106,8 @@ entity ipbusFiveMarocTriggerGenerator is
     triggerNumber_o      : out std_logic_vector(g_BUSWIDTH-1 downto 0);
     timeStamp_o          : out std_logic_vector(g_BUSWIDTH-1 downto 0);
 
-    clk_fast_i        : in std_logic;
-    clk_2x_fast_i     : in std_logic_vector(g_NCLKS-1 downto 0);  --! twice speed of fast clock
-    clk_fast_strobe_i : in std_logic_vector(g_NCLKS-1 downto 0);  --! strobes every other clko_2x_fast cycle. Use for ISERDES
+    clk_8x_i        : in std_logic;
+    clk_16x_i     : in std_logic_vector(g_NCLKS-1 downto 0);  --! twice speed of fast clock
 
     externalHdmiTrigger_a_i : in  std_logic;
     externalGpioTrigger_a_i : in  std_logic;
@@ -170,11 +170,11 @@ architecture rtl of ipbusFiveMarocTriggerGenerator is
 begin
 
   -- read/write to registers storing data to/from MAROC and to control reg.
-  p_addressDecode : process(clk_i)
+  p_addressDecode : process(ipb_clk_i)
   begin
 
     -- Register the accesses....
-    if rising_edge(clk_i) then
+    if rising_edge(ipb_clk_i) then
       -- Decode the address bits to see if we are addressing trigger counters or
       -- control registers
       case control_ipbus_i.ipb_addr(c_OR_COUNTER_SELECT_WIDTH+2 downto
@@ -236,9 +236,9 @@ begin
     
   end process;  -- p_addressDecode
 
-  p_write : process (clk_i)
+  p_write : process (ipb_clk_i)
   begin  -- process p_write
-    if rising_edge(clk_i) then          -- rising clock edge
+    if rising_edge(ipb_clk_i) then          -- rising clock edge
       -- Handle writing
       if control_ipbus_i.ipb_strobe = '1' and control_ipbus_i.ipb_write = '1' then
         case control_ipbus_i.ipb_addr(3 downto 0) is
@@ -261,9 +261,9 @@ begin
   end process p_write;
 
 -- Generate the IPBus ACK signal
-  p_ipbus_ack : process (clk_i)
+  p_ipbus_ack : process (ipb_clk_i)
   begin  -- process p_ipbus_ack
-    if rising_edge(clk_i) then          -- rising clock edge
+    if rising_edge(ipb_clk_i) then          -- rising clock edge
       --s_ack <= control_ipbus_i.ipb_strobe and not s_ack and not s_ack_d1;
       --s_ack_d1 <= s_ack; -- delay strobe by one cycle for DPR latency
       --D s_ipb_strobe_d1 <= control_ipbus_i.ipb_strobe;
@@ -278,11 +278,11 @@ begin
 
 
 --! purpose: Controls state of s_internalTrigger
---! inputs : clk_i , control_ipbus_i 
+--! inputs : ipb_clk_i , control_ipbus_i 
 --! outputs: 
-  p_internalTrigger : process (clk_i , control_ipbus_i)
+  p_internalTrigger : process (ipb_clk_i , control_ipbus_i)
   begin  -- process p_internalTrigger
-    if rising_edge(clk_i) then
+    if rising_edge(ipb_clk_i) then
 
       if control_ipbus_i.ipb_strobe = '1' and control_ipbus_i.ipb_write = '1' and
         control_ipbus_i.ipb_addr(2 downto 0) = "001"
@@ -295,11 +295,11 @@ begin
   end process p_internalTrigger;
 
 --! purpose: Controls state of s_counter_reset
---! inputs : clk_i , control_ipbus_i 
+--! inputs : ipb_clk_i , control_ipbus_i 
 --! outputs: 
-  p_resetCounter : process (clk_i , control_ipbus_i)
+  p_resetCounter : process (ipb_clk_i , control_ipbus_i)
   begin  -- process p_internalTrigger
-    if rising_edge(clk_i) then
+    if rising_edge(ipb_clk_i) then
 
       if control_ipbus_i.ipb_strobe = '1' and control_ipbus_i.ipb_write = '1' and
         control_ipbus_i.ipb_addr(2 downto 0) = "000"
@@ -320,8 +320,8 @@ begin
       g_NTRIGGER_SOURCES => g_NTRIGGER_SOURCES)
     port map (
       adcBusy_i               => adcBusy_i,
-      clk_fast_i              => clk_fast_i,
-      clk_sys_i               => clk_i,
+      clk_8x_i                => clk_8x_i,
+      clk_sys_i               => clk_1x_i,
       reset_i                 => s_counter_reset,
 --      conversion_counter_o => s_conversion_counter,
       externalHdmiTrigger_a_i => externalHdmiTrigger_a_i ,
@@ -422,10 +422,10 @@ begin
       g_NMAROC     => 2*g_NMAROC,
       g_NCLKS      => g_NCLKS) 
     port map (
-      clk_1x_i           => clk_i,
-      clk_8x_i           => clk_fast_i,
-      clk_8x_strobe_i    => clk_fast_strobe_i,
-      clk_16x_i          => clk_2x_fast_i,
+      ipb_clk_i          => ipb_clk_i,
+      clk_1x_i           => clk_1x_i,
+      clk_8x_i           => clk_8x_i,
+      clk_16x_i          => clk_16x_i,
       reset_i            => s_counter_reset,
       event_trig_i       => s_adcConversionStart,
       trigger_number_i   => s_conversion_counter,
@@ -449,7 +449,7 @@ begin
 ------------------------------------------------------------------------------------------------------------------------------------
   cmp_neighbourTriggerIO : entity work.neighbourTriggerIO
     port map (
-      clk_fast_i           => clk_fast_i,
+      clk_8x_i           => clk_8x_i,
       boardType_na_b_i     => s_typeA_typeB_flag,
       hdmi_inout_signals_p => hdmi_inout_signals_p,
       hdmi_inout_signals_n => hdmi_inout_signals_n,

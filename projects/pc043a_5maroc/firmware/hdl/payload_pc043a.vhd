@@ -153,8 +153,8 @@ begin
         maroc_clock_buf  : ODDR2
           port map (
             Q => CK_40M, -- 1-bit output data
-            C0 => ipb_clk, -- 1-bit clock input
-            C1 => ipb_clk_n, -- 1-bit clock input
+            C0 => clk_1x, -- 1-bit clock input
+            C1 => not clk_1x, -- 1-bit clock input
             CE => '1',  -- 1-bit clock enable input
             D0 => '0',   -- 1-bit data input (associated with C0)
             D1 => '1',   -- 1-bit data input (associated with C1)
@@ -211,14 +211,11 @@ begin
           extclk_n => HDMI0_CLK_N,
           sysclk   => sysclk,
           --clko_125 => clk125,
-          clko_fast => clk_fast,
-          clko_2x_fast  => clk_2x_fast,
-          clko_fast_strobe => clk_fast_strobe,
-          --clko_ipb => ipb_clk,
+          clko_1x   => clk_1x,
+          clko_8x   => clk_8x,
+          clko_16x  => clk_16x,
           --clko_ipb_n => ipb_clk_n,
           clock_status => clock_status,
-          rsto_125 => rst_125,
-          rsto_ipb => rst_ipb,
           onehz => onehz
           );
 		
@@ -228,20 +225,21 @@ begin
 -- ipbus slaves live in the entity below, and can expose top-level ports
 -- The ipbus fabric is instantiated within.
 
-	slaves: entity work.slaves_5maroc port map(
+	slaves: entity work.slaves_5maroc 
+        port map(
 		ipb_clk => ipb_clk,
-                ipb_clk_n => ipb_clk_n,
-		rst => rst_ipb,
+        clk_1x => clk_1x,
+		rst => ipb_rst,
 		ipb_in => ipb_master_out,
 		ipb_out => ipb_master_in,
 
                
                 clock_status => clock_status,
                 -- Top level ports from here
-                clk_fast_i => clk_fast,
+                clk_8x_i => clk_8x,
 --                clk_fast_i => clk125,   -- having problems with low latency
-                clk_2x_fast_i => clk_2x_fast,
-                clk_fast_strobe_i => clk_fast_strobe,
+                clk_2x_i => clk_16x,
+                
                 externalHdmiTrigger_a_i => externalHdmiTrigger,
                 externalTrigger_o => open,  -- need to connect to GPIO...
                 maroc_input_signals => maroc_input_signals,

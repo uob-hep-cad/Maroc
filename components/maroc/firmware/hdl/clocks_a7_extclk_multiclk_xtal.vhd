@@ -22,20 +22,17 @@ entity clocks_a7_extclk_multiclk_xtal is
     g_NCLKS : positive := 3);  -- number of clocks to generate for input deserializers
   port
     (-- Clock in ports
-      extclk_P         : in     std_logic;
+      extclk_P         : in     std_logic; --! 25MHz clock from HDMI
       extclk_N         : in     std_logic;
-      sysclk           : in     std_logic;
+      sysclk           : in     std_logic; --! system clock from on-board Xtal ( 50MHz on Enclustra AX3 )
       -- Clock out ports
-      clko_125          : out    std_logic;
-      clko_ipb          : out    std_logic;
-      clko_ipb_n       : out    std_logic;
-      clko_fast        : out    std_logic;
-      clko_2x_fast     : out    std_logic_vector(g_NCLKS-1 downto 0);  --! twice speed of fast clock
-      clko_fast_strobe : out    std_logic_vector(g_NCLKS-1 downto 0);  --! strobes every other clko_2x_fast cycle. Use for ISERDES
+      --clko_125          : out    std_logic;
+      --clko_ipb          : out    std_logic;
+      clko_1x          : out    std_logic; -- 31.25MHz
+      clko_8x          : out    std_logic; -- 250MHz
+      clko_16x         : out    std_logic_vector(g_NCLKS-1 downto 0);  --! 500MHz
       -- Status and control signals
       clock_status     : out    std_logic_vector(g_NCLKS+1 downto 0);  --! bit-0=DCM-lock , 1=PLL-lock, 2 .. g_NCLKS+1=bufpll_lock(0) .. buffpll_lock(g_NCLKS-1)
-      rsto_125         : out    std_logic;
-      rsto_ipb         : out    std_logic;
       onehz            : out    std_logic
  );
 end clocks_a7_extclk_multiclk_xtal;
@@ -44,23 +41,15 @@ architecture rtl of clocks_a7_extclk_multiclk_xtal is
 
   -- Input clock buffering / unused connectors
   signal extclk     : std_logic;
-  -- Output clock buffering / unused connectors
-  signal clkfbout         : std_logic;
-  signal clk_125_s          : std_logic;
-  signal clk_ipb_s , clk_ipb_n_s : std_logic;
-  signal clk_fast_s : std_logic;
-  signal clk_2x_fast_s ,  clk_fast_internal : std_logic;
-  signal clk_2x_fast_internal   : std_logic_vector(g_NCLKS-1 downto 0);
-  signal s_clkfbin_buf    : std_logic;
-  signal clkout4_unused , clkout5_unused   : std_logic;
 
+  signal clk_1x_s : std_logic;
+  signal clk_8x_s : std_logic;
+  signal clk_16x_s : std_logic;
+  
   signal d25, d25_d : std_logic;
   signal pll_locked : std_logic:= '0';  -- Lock status of two PLLs
-  signal dcm_locked : std_logic:= '0';  -- Lock status of DCM
-  signal bufpll_locked: std_logic_vector(g_NCLKS-1 downto 0);
-  signal rst: std_logic := '1';
 
-  signal clk_ipb_b, clk_ipb_n_b , clk_125_b: std_logic;
+  signal s_rst: std_logic := '0';
   
   component clock_divider_s6 port(
     clk: in std_logic;
@@ -72,139 +61,54 @@ architecture rtl of clocks_a7_extclk_multiclk_xtal is
 begin
 
 
-  -- Input buffering for external clock ( on HDMI cable)
-  --------------------------------------
-  extclk_buf : IBUFGDS
+  cmp_clk_gen: entity work.clk_adcs
   port map
-   (O  => extclk,
-    I  => extclk_P,
-    IB => extclk_N);
-
-  -- PLL for generation of IPBus clock, 250MHz clock, 500MHz clk
-  --------------------------------------
-  -- Instantiation of the PLL primitive
-  --    * Unused inputs are tied off
-  --    * Unused outputs are labeled unused
-
-  pll_base_inst0 : PLLE2_BASE
-  generic map
-    (BANDWIDTH            => "OPTIMIZED",
-    CLK_FEEDBACK         => "CLKFBOUT",
-    COMPENSATION         => "SYSTEM_SYNCHRONOUS",
-    DIVCLK_DIVIDE        => 1,
-    CLKFBOUT_MULT        => 20,
-    CLKFBOUT_PHASE       => 0.000,
-    CLKOUT0_DIVIDE       => 2,          -- 250 MHz
-    CLKOUT0_PHASE        => 0.000,
-    CLKOUT0_DUTY_CYCLE   => 0.500,
-    CLKOUT1_DIVIDE       => 1,          -- 500 MHz
-    CLKOUT1_PHASE        => 0.000,
-    CLKOUT1_DUTY_CYCLE   => 0.500,
-    CLKOUT2_DIVIDE       => 16,         -- 31.25 MHz, 0 deg    CLKOUT2_PHASE        => 0.000,
-    CLKOUT2_DUTY_CYCLE   => 0.500,
-    CLKOUT3_DIVIDE       => 16,         -- 31.25 MHz, 180 deg
-    CLKOUT3_PHASE        => 180.000,
-    CLKOUT3_DUTY_CYCLE   => 0.500,
-    CLKOUT4_DIVIDE       => 4,          -- 125MHz
-    CLKOUT4_PHASE        => 0.000,
-    CLKOUT4_DUTY_CYCLE   => 0.500,     
-    CLKIN_PERIOD         => 40.0,
-    REF_JITTER           => 0.010)
-  port map
-    -- Output clocks
-   (CLKFBOUT            => clkfbout,
-    CLKOUT0             => clk_fast_s,    -- 250 MHz
-    CLKOUT1             => clk_2x_fast_s, -- 500 MHz
-    CLKOUT2             => clk_ipb_s,     -- 31.25 MHz
-    CLKOUT3             => clk_ipb_n_s,
-    CLKOUT4             => clkout5_unused, -- clk_125_s,
-    CLKOUT5             => clkout5_unused,
-    -- Status and control signals
-    LOCKED              => pll_locked,
-    RST                 => '0',
-    -- Input clock control
-    CLKFBIN             => clkfbout, -- s_clkfbin_buf,
-    CLKIN               => extclk);
-
-  -- Feedback buffer
-  -----------------------------------------------------------------------------
---  clkfb_buf : BUFIO2FB
---  port map (
---    O => s_clkfbin_buf, -- 1-bit output: Output feedback clock (connect to feedback input of DCM/PLL)
---    I => clk_2x_fast_internal  -- 1-bit input: Feedback clock input (connect to input port)
---  );
-
+  (
+  -- Clock out ports  
+  clk_1x   => clk_1x_s,
+  clk_8x   => clk_8x_s,
+   clk_8x  => clk_16x_s,
+  -- Status and control signals               
+  reset   => '0', 
+  locked  => pll_locked,
+ -- Clock in ports
+  clk_in1_p   => extclk_P,
+  clk_in1_n   => extclk_N
+  );
   
   -- Output buffering for IPBus clock , 250MHz clock ( clk_fast) and
   -- 500MHz clock ( clk_2x_fast )
   -------------------------------------
 
-  clkipb_buf : BUFG
-  port map
-   (O   => clk_ipb_b,
-    I   => clk_ipb_s);
+  clko_fast <= clk_fast_s;
 
-  clko_ipb <= clk_ipb_b;
-  
-  clk_fast_buf0 : BUFG
-  port map
-   (O   => clk_fast_internal,
-    I   => clk_fast_s);
-
-  clko_fast <= clk_fast_internal;
-  
-  clkipb_n_buf : BUFG
-  port map
-   (O   => clk_ipb_n_b,
-    I   => clk_ipb_n_s);
-
-  clko_ipb_n <= clk_ipb_n_b;
-
-  gen_BUFPLL: for iBUFPLL in 0 to g_NCLKS-1 generate
+  gen_BUFIO: for iBUFIO in 0 to g_NCLKS-1 generate
     begin
-      cmp_bufpll : BUFPLL
-        generic map (
-          DIVIDE => 2)
-        port map (
-          IOCLK  => clk_2x_fast_internal(iBUFPLL),            -- output, I/O clock
-          LOCK   => bufpll_locked(iBUFPLL),              -- locked output
-          SERDESSTROBE =>  clko_fast_strobe(iBUFPLL),  -- output to ISERDES2
-          GCLK   => clk_fast_internal,
-          LOCKED => pll_locked ,              -- input from PLL
-          PLLIN  => clk_2x_fast_s                 -- BUFG input
-          );
-    end generate gen_BUFPLL;
+      cmp_BUFIO : BUFIO
+   port map (
+      O => clko_16x, -- 1-bit output: Clock output (connect to I/O clock loads).
+      I => clk_16x_s  -- 1-bit input: Clock input (connect to an IBUF or BUFMR).
+   );
 
-  clko_2x_fast <= clk_2x_fast_internal;
+    end generate gen_BUFIO;
 
 
-  -------------------------------------------------------------------------
-  -- 125MHz clock for Ethernet interface.
+cmp_BUFR : BUFR
+   generic map (
+      BUFR_DIVIDE => "2",   -- Values: "BYPASS, 1, 2, 3, 4, 5, 6, 7, 8" 
+      SIM_DEVICE => "7SERIES"  -- Must be set to "7SERIES" 
+   )
+   port map (
+      O => clko_8x,  -- 1-bit output: Clock output port
+      CE => '1',     -- 1-bit input: Active high, clock enable (Divided modes only)
+      CLR => s_rst,  -- 1-bit input: Active high, asynchronous clear (Divided modes only)
+      I => clk_8x_s  -- 1-bit input: Clock buffer input driven by an IBUF, MMCM or local interconnect
+   );
+
+  clko_1x <= clk_1x_s;
 
 
-  -- CHANGEME - update Spartan6 primitive to Artix 7
-  dcm0: DCM_CLKGEN
-    generic map(
-      CLKIN_PERIOD => 5.0,
-      CLKFX_MULTIPLY => 5,
-      CLKFX_DIVIDE => 8,
-      CLKFXDV_DIVIDE => 4
-      )
-    port map(
-      clkin => sysclk,
-      clkfx => clk_125_s,
-      clkfxdv => open,
-      locked => dcm_locked,
-      rst => '0'
-      );
-
-  clk125_buf : BUFG
-    port map
-    (O   => clk_125_b,
-     I   => clk_125_s);
-
-  clko_125 <= clk_125_b;
-    
+  
   -------------------------------------------------------------------------
   clkdiv: clock_divider_s6 port map(
     clk => sysclk,
@@ -212,32 +116,17 @@ begin
     d28 => onehz
     );
 
-  process(sysclk)
-  begin
-    if rising_edge(sysclk) then
-      d25_d <= d25;
-      if d25='1' and d25_d='0' then
-        rst <= not dcm_locked;
-      end if;
-    end if;
-  end process;
-	
-
-  process(clk_ipb_b)
-  begin
-    if rising_edge(clk_ipb_b) then
-      rsto_ipb <= rst;
-    end if;
-  end process;
-	
-  process(clk_125_b)
-  begin
-    if rising_edge(clk_125_b) then
-      rsto_125 <= rst;
-    end if;
-  end process;
+  --process(sysclk)
+  --begin
+  --  if rising_edge(sysclk) then
+  --    d25_d <= d25;
+  --    if d25='1' and d25_d='0' then
+  --      s_rst <= not pll_locked;
+  --    end if;
+  --  end if;
+  --end process;
 
   --! bit-0=DCM-lock , 1=PLL-lock, 2 .. g_NCLKS+1=bufpll_lock(0) .. buffpll_lock(g_NCLKS-1)
-  clock_status <= bufpll_locked & ( pll_locked , dcm_locked);
+  clock_status <= "0" &  pll_locked & "0000";
   
 end rtl;

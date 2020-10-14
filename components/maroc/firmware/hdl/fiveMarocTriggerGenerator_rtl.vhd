@@ -18,7 +18,7 @@ USE UNISIM.vcomponents.all;
 ------------------------------------------------------------------------------- --
 -- unit name: fiveMarocTriggerGenerator (fiveMarocTriggerGenerator / rtl)
 --
---! @brief Takes asynchronous trigger signals, registers them onto clk_fast_i
+--! @brief Takes asynchronous trigger signals, registers them onto clk_8x_i
 --! and outputs an externalTrigger_o signal. 
 --
 --! @author David Cussans , David.Cussans@bristol.ac.uk
@@ -36,8 +36,8 @@ USE UNISIM.vcomponents.all;
 --! bit3 - or2_i
 --! bit4 - or1 
 --! bit6 - externalGpioTrigger_i
---! Delays trigger by hold1Delay_i cycles of clk_fast_i and then asserts hold1.
---! Delays hold1 by hold2Delay_i cycles of clk_fast_i then asserts hold2
+--! Delays trigger by hold1Delay_i cycles of clk_8x_i and then asserts hold1.
+--! Delays hold1 by hold2Delay_i cycles of clk_8x_i then asserts hold2
 --! After asserting hold2 outputs a pulse on adcStartConversion_o , last for single cycle of clk_sys_i
 --! When the ADC controller signals end of conversion by pulsing adcConversionEnd_i then
 --! hold1,hold2 are deasserted.
@@ -74,21 +74,21 @@ ENTITY fiveMarocTriggerGenerator IS
     );
    PORT( 
       adcBusy_i   : IN     std_logic;                      --! High is any of the MAROC are busy
-      clk_fast_i           : IN     std_logic;                      --! Fast clock used to register and delay trigger signals
+      clk_8x_i           : IN     std_logic;                      --! Fast clock used to register and delay trigger signals
       clk_sys_i            : IN     std_logic;                      --! system clock used for adcConversionEnd_o , adcConversionStart_i
       reset_i              : in     std_logic;                       --! Active high. Resets s_preDelayHold and counter value
 --      conversion_counter_o : out    std_logic_vector( g_BUSWIDTH-1 downto 0); --! Number of ADC conversions since last reset. Wraps round at full scale.
       externalHdmiTrigger_a_i: in std_logic;  --! External trigger ( routed from HDMI connector). Async
       externalGpioTrigger_a_i: in std_logic;  --! External trigger ( routed from TTLU GPIO connector). Async
-      internalTrigger_i    : IN     std_logic;                      --! Internal trigger ( from IPBus slave). Sync with clk_sys_i, but assume async w.r.t. clk_fast_i 
+      internalTrigger_i    : IN     std_logic;                      --! Internal trigger ( from IPBus slave). Sync with clk_sys_i, but assume async w.r.t. clk_8x_i 
       triggerSourceSelect_i : IN    std_logic_vector(g_NTRIGGER_SOURCES-1 downto 0);   --! 7-bit mask to select which trigger inputs are active.
                                                                                     --! bit0 = internal , bit1 = external ,
                                                                                     --! bit2 = or1 , bit3 = or2
                                                                                     --! bit3 = or1 from neighbour , bit5 = or2 from neighbour
                                                                                     --! bit6 = GPIO
       
-      hold1Delay_i         : IN     std_logic_vector (g_NMAROC-1 DOWNTO 0);  --! Number of clocks of clk_fast_i to between input trigger and HOLD1 output
-      hold2Delay_i         : IN     std_logic_vector (g_NMAROC-1 DOWNTO 0);  --! Number of clocks of clk_fast_i to between input trigger and HOLD2 output
+      hold1Delay_i         : IN     std_logic_vector (g_NMAROC-1 DOWNTO 0);  --! Number of clocks of clk_8x_i to between input trigger and HOLD1 output
+      hold2Delay_i         : IN     std_logic_vector (g_NMAROC-1 DOWNTO 0);  --! Number of clocks of clk_8x_i to between input trigger and HOLD2 output
 
       or1_a_i              : IN     std_logic_vector(g_NMAROC-1 downto 0);                      --! OR1 output from MAROC. Async
       or2_a_i              : IN     std_logic_vector(g_NMAROC-1 downto 0);                      --! OR2 output from MAROC. Async
@@ -96,9 +96,9 @@ ENTITY fiveMarocTriggerGenerator IS
       or2_from_neighbour_i : in std_logic;  --! OR2 signal from another FPGA on HDMI cable
         
       adcConversionStart_o : OUT    std_logic;                      --! start of conversion signal to ADC controller. Sync with rising edge of clk_sys_i
-      externalTrigger_o    : OUT    std_logic;                      --! Trigger output. Sync with rising edge of clk_fast_i
-      hold1_o              : OUT    std_logic;                      --! HOLD1 output to MAROC. ACTIVE LOW. Sync with rising edge clk_fast_i
-      hold2_o              : OUT    std_logic;                       --! HOLD2 output to MAROC. ACTIVE LOW. Sync with rising edge clk_fast_i
+      externalTrigger_o    : OUT    std_logic;                      --! Trigger output. Sync with rising edge of clk_8x_i
+      hold1_o              : OUT    std_logic;                      --! HOLD1 output to MAROC. ACTIVE LOW. Sync with rising edge clk_8x_i
+      hold2_o              : OUT    std_logic;                       --! HOLD2 output to MAROC. ACTIVE LOW. Sync with rising edge clk_8x_i
       fsmStatus_o          : out std_logic_vector(1 downto 0)
    );
 
@@ -110,7 +110,7 @@ END fiveMarocTriggerGenerator ;
 ARCHITECTURE rtl OF fiveMarocTriggerGenerator IS
 
   signal s_or1_a , s_or2_a : std_logic := '0';  -- Result of OR signals from all Marocs combined
-  signal s_or1_d1 : std_logic;       -- ! OR1 signal delayed by one-clock of clk_fast_i
+  signal s_or1_d1 : std_logic;       -- ! OR1 signal delayed by one-clock of clk_8x_i
   signal s_or1_d2 : std_logic;             --!
       
   signal s_or2_d1 : std_logic;             --!
@@ -157,12 +157,12 @@ BEGIN
   
   --! purpose: Registers async signals onto fast clock to supress meta-stability
   --! type   : sequential
-  --! inputs : clk_fast_i
+  --! inputs : clk_8x_i
   --! outputs: 
-  p_RegisterSignals: process (clk_fast_i)
+  p_RegisterSignals: process (clk_8x_i)
   begin  -- process p_RegisterSignals
 
-    if rising_edge(clk_fast_i) then
+    if rising_edge(clk_8x_i) then
 
       s_or1_d1 <= s_or1_a;
       s_or1_d2 <= s_or1_d1;
@@ -208,11 +208,11 @@ BEGIN
   --! Sets hold* low when trigger goes high.
   --! Sets hold* high when either busy drops or reset go high.
   --! type   : sequential
-  --! inputs : clk_fast_i , adcBusy_i ,  s_trig_d2 , reset_i
+  --! inputs : clk_8x_i , adcBusy_i ,  s_trig_d2 , reset_i
   --! outputs: hold_o
   cmp_holdfsm: entity work.marocHoldFSM
     port map (
-      clk_i       => clk_fast_i,
+      clk_i       => clk_8x_i,
       rst_i       => reset_i,
       trigger_i   => s_trig,
       adcBusy_i   => adcBusy_i,
@@ -224,7 +224,7 @@ BEGIN
     generic map (
       g_PULSE_LENGTH => 8 )
     port map (
-      clk_i     => clk_fast_i,
+      clk_i     => clk_8x_i,
       level_i  => not s_preDelayHold,
       pulse_out => externalTrigger_o);
   
@@ -239,7 +239,7 @@ BEGIN
       Q31 => open, -- SRL cascade output pin 
       A => hold1Delay_i, -- 5-bit shift depth select input 
       CE => '1', -- Clock enable input 
-      CLK => clk_fast_i, -- Clock input 
+      CLK => clk_8x_i, -- Clock input 
       D => s_preDelayHold -- SRL data input
       ); -- End of SRLC32E_inst instantiation
 
@@ -254,7 +254,7 @@ BEGIN
       Q31 => open, -- SRL cascade output pin 
       A => hold2Delay_i, -- 5-bit shift depth select input 
       CE => '1', -- Clock enable input 
-      CLK => clk_fast_i, -- Clock input 
+      CLK => clk_8x_i, -- Clock input 
       D => s_hold1 -- SRL data input
       ); -- End of SRLC32E_inst instantiation
 

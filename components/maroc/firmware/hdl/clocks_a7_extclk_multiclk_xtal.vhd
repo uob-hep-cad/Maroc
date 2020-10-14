@@ -67,7 +67,7 @@ begin
   -- Clock out ports  
   clk_1x   => clk_1x_s,
   clk_8x   => clk_8x_s,
-   clk_8x  => clk_16x_s,
+  clk_8x   => clk_16x_s,
   -- Status and control signals               
   reset   => '0', 
   locked  => pll_locked,
@@ -80,13 +80,13 @@ begin
   -- 500MHz clock ( clk_2x_fast )
   -------------------------------------
 
-  clko_fast <= clk_fast_s;
+  clko_x8 <= clk_8x_s;
 
   gen_BUFIO: for iBUFIO in 0 to g_NCLKS-1 generate
     begin
       cmp_BUFIO : BUFIO
    port map (
-      O => clko_16x, -- 1-bit output: Clock output (connect to I/O clock loads).
+      O => clko_16x(iBUFIO), -- 1-bit output: Clock output (connect to I/O clock loads).
       I => clk_16x_s  -- 1-bit input: Clock input (connect to an IBUF or BUFMR).
    );
 
@@ -95,7 +95,7 @@ begin
 
 cmp_BUFR : BUFR
    generic map (
-      BUFR_DIVIDE => "2",   -- Values: "BYPASS, 1, 2, 3, 4, 5, 6, 7, 8" 
+      BUFR_DIVIDE => "BYPASS",   -- Values: "BYPASS, 1, 2, 3, 4, 5, 6, 7, 8" 
       SIM_DEVICE => "7SERIES"  -- Must be set to "7SERIES" 
    )
    port map (

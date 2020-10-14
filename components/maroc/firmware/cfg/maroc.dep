@@ -32,7 +32,7 @@ src ipbus_ver.vhd
 # src ipbus_reg.vhd
 include -c ipbus-firmware:components/ipbus_slaves syncreg_v.dep
 
-src ipbus_pulseout_datain.vhd
+# src ipbus_pulseout_datain.vhd
 
 src clocks_a7_extclk_multiclk_xtal.vhd
 src ../cgn/clk_adcs.xci

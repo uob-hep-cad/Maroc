@@ -7,6 +7,9 @@ src marocADCFSM_rtl.vhd
 # src dpram.vhd
 src counterWithReset_rtl.vhd
 src fineTimeStamp_rtl.vhd
+src singleFineTimeStamp_rtl.vhd
+src ISERDES_1to2_rtl.vhd
+src arrivalTimeLUT_rtl.vhd
 src multiCounterWithReset_rtl.vhd
 src neighbourTriggerIO_rtl.vhd
 src --vhdl2008 slaves_5maroc.vhd

@@ -93,7 +93,7 @@ end payload;
 
 architecture rtl of payload is
 
-	signal  clk_fast, ipb_clk_n , rst_125, rst_ipb, onehz : STD_LOGIC;
+	signal  clk_8x , clk_1x , ipb_clk_n , rst_125, rst_ipb, onehz : STD_LOGIC;
         signal clock_status : std_logic_vector(c_NCLKS+1 downto 0) := ( others => '0' );  --! locked/status lines for PLL, DCM, BUFPLLs
 	signal mac_txd, mac_rxd : STD_LOGIC_VECTOR(7 downto 0);
 	signal mac_txdvld, mac_txack, mac_rxclko, mac_rxdvld, mac_rxgoodframe, mac_rxbadframe : STD_LOGIC;
@@ -117,8 +117,7 @@ architecture rtl of payload is
         --signal clk_2x_fast : std_logic; 
         --signal clk_fast_strobe : std_logic;
         -- try for multiple 500MHz clocks....
-        signal clk_2x_fast : std_logic_vector(c_NCLKS-1 downto 0); 
-        signal clk_fast_strobe : std_logic_vector(c_NCLKS-1 downto 0); 
+        signal clk_16x: std_logic_vector(c_NCLKS-1 downto 0); 
          
 begin
 
@@ -238,7 +237,7 @@ begin
                 -- Top level ports from here
                 clk_8x_i => clk_8x,
 --                clk_fast_i => clk125,   -- having problems with low latency
-                clk_2x_i => clk_16x,
+                clk_16x_i => clk_16x,
                 
                 externalHdmiTrigger_a_i => externalHdmiTrigger,
                 externalTrigger_o => open,  -- need to connect to GPIO...

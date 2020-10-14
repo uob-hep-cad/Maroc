@@ -50,8 +50,6 @@ use unisim.vcomponents.all;
 
 
 ENTITY ISERDES_1to2 IS
-  generic (
-    g_DUAL_ISERDES : boolean := true);  -- ! Set to FALSE to build with only one input ISERDES
    PORT( 
      serdes_reset_i : IN     std_logic;                      --! Starts recalibration sequence
      data_i         : IN     std_logic;                      --! Data from trigger input

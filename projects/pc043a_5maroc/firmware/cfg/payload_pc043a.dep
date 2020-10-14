@@ -1,8 +1,9 @@
-src payload_pc043a.vhd
+src --vhdl2008 payload_pc043a.vhd
 # src ipbus_decode_top_pc043a.vhd
 addrtab -t top_pc043a.xml
 addrtab shift_reg.xml
-addrtab trigger.xml
+addrtab triggerData.xml
+addrtab triggerCtrl.xml
 addrtab adcData.xml
 addrtab adcCtrl.xml
 src -c ipbus-firmware:components/ipbus_core ipbus_fabric.vhd

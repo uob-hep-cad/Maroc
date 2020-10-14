@@ -59,10 +59,8 @@ entity fineTimeStamp is
     g_NCLKS : positive := 3;
     --                                              0      , 1      , 2      , 3      , 4
     --                                              5      , 6      , 7      , 8      , 9
-    g_CLOCK_DOMAIN :  t_integer_array(0 to 9) := ( 0      , 0      , 0      , 1      , 2
-                                                  , 1      , 0      , 0      , 0      , 3);
-    g_DUAL_SERDES_FLAG : t_bool_array(0 to 9) := ( true   , true   , true   , true   , false
-                                                  , false  , true   , true   , true   , false)
+    g_CLOCK_DOMAIN :  t_integer_array(0 to 9) := ( 0      , 0      , 0      , 0      , 0
+                                                  , 0      , 0      , 0      , 0      , 0)
     );
   port (
     clk_1x_i           : in  std_logic;    --! IPBus clock ( 31.25MHz )
@@ -114,8 +112,7 @@ begin  -- rtl
       -- can use two ISERDES.
       cmp_singleFineTimeStamp : entity work.singleFineTimeStamp
         generic map (
-          g_BUSWIDTH => g_BUSWIDTH,
-          g_DUAL_ISERDES => g_DUAL_SERDES_FLAG(iMaroc)
+          g_BUSWIDTH => g_BUSWIDTH
           )
         port map (
           clk_1x_i           => clk_1x_i,

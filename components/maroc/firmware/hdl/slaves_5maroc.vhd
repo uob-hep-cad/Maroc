@@ -52,9 +52,9 @@ end slaves_5maroc;
 architecture rtl of slaves_5maroc is
 
   --constant NSLV: positive := 9 + c_NMAROC;
-  constant NSLV: positive := 10 + (2*c_NMAROC);
-  signal ipbw: ipb_wbus_array(NSLV-1 downto 0);
-  signal ipbr: ipb_rbus_array(NSLV-1 downto 0);
+  --constant NSLV: positive := 10 + (2*c_NMAROC);
+  signal ipbw: ipb_wbus_array(N_SLAVES-1 downto 0);
+  signal ipbr: ipb_rbus_array(N_SLAVES-1 downto 0);
   signal register_data: std_logic_vector(c_BUSWIDTH-1 downto 0);
 
   --! MarocSelect chooses which Maroc for slow control ( 7 = all )
@@ -80,6 +80,9 @@ architecture rtl of slaves_5maroc is
 
   signal s_fsmStatus : std_logic_vector(1 downto 0);
   
+  signal s_strobe : std_logic;
+  signal s_lines_to_pulse : std_logic_vector( s_pulsed_lines'range );
+
 begin
 
 --  Generate HDMI I/O for debugging.
@@ -106,11 +109,12 @@ begin
   --   IB => hdmi_input_signals.HDMI0_DATA_N(2)
   --   );
           
-  fabric: entity work.ipbus_fabric
-    generic map(NSLV => NSLV )
+  fabric: entity work.ipbus_fabric_sel
+    generic map(
+      NSLV => N_SLAVES,
+      SEL_WIDTH => IPBUS_SEL_WIDTH )
     port map(
---      ipb_clk => ipb_clk,
---      rst => rst,
+      sel => ipbus_sel_top_pc043a(ipb_in.ipb_addr),
       ipb_in => ipb_in,
       ipb_out => ipb_out,
       ipb_to_slaves => ipbw,
@@ -129,11 +133,11 @@ begin
     port map(
       clk => ipb_clk,
 
-      reset => rst,
-      ipbus_in => ipbw(N_SLV_GPIO),
-      ipbus_out => ipbr(N_SLV_GPIO),
+      rst =>  rst,
+      ipb_in => ipbw(N_SLV_GPIO),
+      ipb_out => ipbr(N_SLV_GPIO),
       slv_clk   => clk_1x,
-      q => (register_data)
+      q(0) => register_data
       );
 
   --! Slave 2: 32b register ( maroc select lines)
@@ -141,11 +145,11 @@ begin
     generic map(N_STAT => 0)
     port map(
       clk => ipb_clk,
-      reset => rst,
-      ipbus_in => ipbw(N_SLV_SELECT),
-      ipbus_out => ipbr(N_SLV_SELECT),
+      rst =>  rst,
+      ipb_in => ipbw(N_SLV_SELECT),
+      ipb_out => ipbr(N_SLV_SELECT),
       slv_clk   => clk_1x,
-      q => (s_marocSelect)
+      q(0) => s_marocSelect
       );
   
   maroc_input_signals.maroc_select <= s_marocSelect( maroc_input_signals.maroc_select'range);
@@ -155,23 +159,38 @@ begin
     generic map(N_STAT => 0)
     port map(
       clk => ipb_clk,
-      reset => rst,
-      ipbus_in => ipbw(N_SLV_MASK),
-      ipbus_out => ipbr(N_SLV_MASK),
+      rst =>  rst,
+      ipb_in => ipbw(N_SLV_MASK),
+      ipb_out => ipbr(N_SLV_MASK),
       slv_clk   => clk_1x,
-      q => (s_marocMask)  
+      q(0) => s_marocMask  
       );
 
   -- Slave 4: reset signal
-  slave4: entity work.ipbus_pulseout_datain
-  port map (
-    clk => ipb_clk,
-    ipbus_in => ipbw(N_SLV_CONTROLREG),
-    ipbus_out => ipbr(N_SLV_CONTROLREG),
-    slv_clk   => clk_1x,
-    q_out => (s_pulsed_lines),
-    d_in => (s_clock_status)
-    );
+  slave4: entity work.ipbus_syncreg_v
+    generic map(N_STAT => 1)
+    port map(
+      clk => ipb_clk,
+      rst =>  rst,
+      ipb_in => ipbw(N_SLV_CONTROLREG),
+      ipb_out => ipbr(N_SLV_CONTROLREG),
+      slv_clk   => clk_1x,
+      stb(0) => s_strobe,
+      q(0)   => s_lines_to_pulse ,
+      d(0)   => s_clock_status 
+      );
+
+    s_pulsed_lines <= s_lines_to_pulse when (s_strobe='1') else (others=> '0');
+
+  --slave4: entity work.ipbus_pulseout_datain
+  --port map (
+  --  clk => ipb_clk,
+  --  ipbus_in => ipbw(N_SLV_CONTROLREG),
+  --  ipbus_out => ipbr(N_SLV_CONTROLREG),
+  --  slv_clk   => clk_1x,
+  --  q_out => (s_pulsed_lines),
+  --  d_in => (s_clock_status)
+  --  );
 
   -- Copy clock_status to s_clock_status and pad with zeros.
   s_clock_status(clock_status'range) <= clock_status;
@@ -186,7 +205,7 @@ begin
 --
   maroc_input_signals.en_otaq_2v5    <= register_data(2);
   
-  p_sample_reset: process ( ipb_clk )
+  p_sample_reset: process ( clk_1x )
     begin
       if rising_edge(ipb_clk) then
         s_external_reset_d1 <=  gpio_i(6);
@@ -250,9 +269,9 @@ begin
       g_NCLKS => c_NCLKS)
     port map (
       -- signals to IPBus
-      clk_i => clk_1x,
+      clk_1x_i => clk_1x,
       reset_i  => rst,
-      ipb_clk  => ipb_clk,
+      ipb_clk_i  => ipb_clk,
       control_ipbus_i  => ipbw(N_SLV_TRIGGERCTRL),
       control_ipbus_o  => ipbr(N_SLV_TRIGGERCTRL),
       data_ipbus_i  => ipbw(N_SLV_TRIGGERDATA),
@@ -327,7 +346,7 @@ begin
 
         -- signals to IPBus
         clk_i => clk_1x,
-        ipb_clk => ipb_clk
+        ipb_clk => ipb_clk,
         reset_i  => rst,
         
         control_ipbus_i  => ipbw( (2*iMaroc) + N_SLV_ADC0CTRL),

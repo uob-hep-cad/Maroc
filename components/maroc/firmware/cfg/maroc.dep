@@ -10,7 +10,7 @@ src fineTimeStamp_rtl.vhd
 src timeStampDPRAM_rtl.vhd
 src ipbusDPRAM.vhd
 src singleFineTimeStamp_rtl.vhd
-src ISERDES_1to2_rtl.vhd
+src --vhdl2008 ISERDES_1to2_rtl.vhd
 src arrivalTimeLUT_rtl.vhd
 src multiCounterWithReset_rtl.vhd
 src neighbourTriggerIO_rtl.vhd

@@ -133,11 +133,11 @@ ISERDESE2_inst : ISERDESE2
       -- Clocks: 1-bit (each) input: ISERDESE2 clock input ports
       CLK => fastClk_i,                   -- 1-bit input: High-speed clock. Drive from BUFIO
       CLKB => not fastClk_i,              -- 1-bit input: High-speed secondary clock
-      CLKDIV => CLKDIV,             -- 1-bit input: Divided clock. Drive from BUFR
+      CLKDIV => fabricClk_i,             -- 1-bit input: Divided clock. Drive from BUFR
       OCLK => '0',                 -- 1-bit input: High speed output clock used when INTERFACE_TYPE="MEMORY" 
       -- Dynamic Clock Inversions: 1-bit (each) input: Dynamic clock inversion pins to switch clock polarity
-      -- DYNCLKDIVSEL => DYNCLKDIVSEL, -- 1-bit input: Dynamic CLKDIV inversion
-      -- DYNCLKSEL => DYNCLKSEL,       -- 1-bit input: Dynamic CLK/CLKB inversion
+      DYNCLKDIVSEL => '0', -- 1-bit input: Dynamic CLKDIV inversion
+      DYNCLKSEL => '0',       -- 1-bit input: Dynamic CLK/CLKB inversion
       -- Input Data: 1-bit (each) input: ISERDESE2 data input ports
       D => data_i ,                       -- 1-bit input: Data input
       DDLY => '0',                 -- 1-bit input: Serial data from IDELAYE2

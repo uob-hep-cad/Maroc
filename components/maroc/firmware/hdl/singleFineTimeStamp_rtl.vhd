@@ -49,7 +49,6 @@ entity singleFineTimeStamp is
   
   generic (
     g_BUSWIDTH : positive := 32;
-    g_DUAL_ISERDES : boolean := TRUE; --! set true for two out of phase ISERDES
     g_TRIG_8x_PRELOAD : std_logic_vector(15 downto 0) := "0000111111111111" --! Pattern clocked out by 8x clock when trigger detected
     );
   port (
@@ -82,8 +81,6 @@ architecture rtl of singleFineTimeStamp is
 begin  -- rtl
 
   cmp_iserdes: entity work.ISERDES_1to2
-    generic map (
-      g_DUAL_ISERDES => g_DUAL_ISERDES)
     PORT MAP (
       serdes_reset_i => reset_i,
       data_i => trig_in_a_i,

@@ -67,7 +67,6 @@ entity fineTimeStamp is
     clk_8x_i           : in  std_logic;    --! 4 x IPBus clock ( 250 MHz )
     --clk_8x_strobe_i    : in  std_logic;    --! Strobes every other cycle of clk_8x
     --clk_16x_i          : in  std_logic;    --! eight time IPBus clock freq
-    clk_8x_strobe_i    : in  std_logic_vector(g_NCLKS-1 downto 0);    --! Strobes every other cycle of clk_8x
     clk_16x_i          : in  std_logic_vector(g_NCLKS-1 downto 0);    --! eight time IPBus clock freq
     reset_i            : in  std_logic;  --! Resets pointers, active high, synchronous with clk_1x
     event_trig_i       : in  std_logic;  --! Goes high for one cycle of clk_1x for each event. Causes fine timestamps to be written to buffer
@@ -80,6 +79,7 @@ entity fineTimeStamp is
     write_address_o    : out std_logic_vector(g_ADDR_WIDTH-1 downto 0); --! next location in dual-port buffer memory that will get written to
 
     -- IPBus for access to DPR
+    ipbus_clk_i : in std_logic;
     ipbus_i : in  ipb_wbus;
     ipbus_o : out ipb_rbus
 
@@ -156,6 +156,7 @@ begin  -- rtl
         event_timestamp_i => coarse_timestamp_i,
         write_pointer_o => write_address_o,
 
+        ipbus_clk       => ipbus_clk,
         ipbus_i         => ipbus_i,
         ipbus_o         => ipbus_o
         

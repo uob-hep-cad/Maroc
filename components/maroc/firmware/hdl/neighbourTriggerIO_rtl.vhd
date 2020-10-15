@@ -21,7 +21,7 @@ entity neighbourTriggerIO is
     );
 
   port (
-    clk_fast_i           : in    std_logic;  -- ! Clock to register signals
+    clk_8x_i           : in    std_logic;  -- ! Clock to register signals
     boardType_na_b_i     : in    std_logic;  -- ! indicates which direction for signals to/from
                                              -- neighbour. 0 = type-A
     hdmi_inout_signals_p : inout std_logic_vector(g_NHDMI_SIGNALS-1 downto 0);  -- ! In/output signals to HDMI cabl
@@ -50,9 +50,9 @@ begin  -- rtl
 -- Receive OR1 , OR2 signals from neighbouring FPGA
 -- Control the direction of I/O buffers based on boardType_na_b_i
 ------------------------------------------------------------------------------------------------------------------------------------
-  process (clk_fast_i)
+  process (clk_8x_i)
   begin
-    if rising_edge(clk_fast_i) then
+    if rising_edge(clk_8x_i) then
       s_or1_to_neighbour <= or1_to_neighbour_i(0) or or1_to_neighbour_i(1) or or1_to_neighbour_i(2) or or1_to_neighbour_i(3) or or1_to_neighbour_i(4);
       s_or2_to_neighbour <= or2_to_neighbour_i(0) or or2_to_neighbour_i(1) or or2_to_neighbour_i(2) or or2_to_neighbour_i(3) or or2_to_neighbour_i(4);
 

@@ -355,7 +355,7 @@ begin
     generic map (
       g_COUNTER_WIDTH => g_BUSWIDTH)
     port map (
-      clock_i  => clk_i,
+      clock_i  => clk_1x_i,
       reset_i  => s_counter_reset,
       enable_i => s_adcConversionStart,
       result_o => s_conversion_counter);
@@ -365,7 +365,7 @@ begin
     generic map (
       g_COUNTER_WIDTH => g_BUSWIDTH)
     port map (
-      clock_i  => clk_i,
+      clock_i  => clk_1x_i,
       reset_i  => s_counter_reset,
       enable_i => '1',
       result_o => s_timeStamp);
@@ -379,7 +379,7 @@ begin
       g_NUM_COUNTERS  => g_NMAROC,
       g_ADDR_WIDTH    => c_OR_COUNTER_SELECT_WIDTH)
     port map (
-      clock_i  => clk_i,
+      clock_i  => clk_1x_i,
       reset_i  => s_counter_reset,
       enable_i => s_or1_ipbclk,
       result_o => s_triggerCounterOR1,
@@ -395,7 +395,7 @@ begin
       g_NUM_COUNTERS  => g_NMAROC,
       g_ADDR_WIDTH    => c_OR_COUNTER_SELECT_WIDTH)
     port map (
-      clock_i  => clk_i,
+      clock_i  => clk_1x_i,
       reset_i  => s_counter_reset,
       enable_i => s_or2_ipbclk,
       result_o => s_triggerCounterOR2,
@@ -422,7 +422,7 @@ begin
       g_NMAROC     => 2*g_NMAROC,
       g_NCLKS      => g_NCLKS) 
     port map (
-      ipb_clk_i          => ipb_clk_i,
+      ipbus_clk_i          => ipb_clk_i,
       clk_1x_i           => clk_1x_i,
       clk_8x_i           => clk_8x_i,
       clk_16x_i          => clk_16x_i,

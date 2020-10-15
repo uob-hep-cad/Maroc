@@ -113,7 +113,7 @@ begin
 			ipb_out => ipb_out
 		);
 		
-	leds <= not (userleds & inf_leds);
+	leds <= not ('0' & userled & inf_leds);
 	phy_rstn <= not phy_rst_e;
 		
 	mac_addr <= X"020ddba11640"; -- Careful here, arbitrary addresses do not always work

@@ -345,8 +345,10 @@ begin
       port map(
 
         -- signals to IPBus
-        clk_i => clk_1x,
-        ipb_clk => ipb_clk,
+        -- CHANGEME - move to separate ADC and IPBus clocks
+        clk_i => ipb_clk,
+        --clk_i => clk_1x,
+        --ipb_clk => ipb_clk,
         reset_i  => rst,
         
         control_ipbus_i  => ipbw( (2*iMaroc) + N_SLV_ADC0CTRL),

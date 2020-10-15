@@ -117,7 +117,6 @@ begin  -- rtl
         port map (
           clk_1x_i           => clk_1x_i,
           clk_8x_i           => clk_8x_i,
-          clk_8x_strobe_i    => clk_8x_strobe_i( g_CLOCK_DOMAIN(iMaroc) ),
           clk_16x_i          => clk_16x_i( g_CLOCK_DOMAIN(iMaroc) ),
           reset_i            => reset_i,
           timestamp_o        => s_finetimestamps(iMaroc),
@@ -156,7 +155,7 @@ begin  -- rtl
         event_timestamp_i => coarse_timestamp_i,
         write_pointer_o => write_address_o,
 
-        ipbus_clk       => ipbus_clk,
+        ipbus_clk       => ipbus_clk_i,
         ipbus_i         => ipbus_i,
         ipbus_o         => ipbus_o
         

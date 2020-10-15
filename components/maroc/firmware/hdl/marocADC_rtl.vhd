@@ -199,6 +199,9 @@ begin
 --      Wren_a    =>  s_wen_d1,
       Wren_a    =>  s_wen,
       clk       =>  clk_i,
+      
+      -- CHANGEME - separate IPBus and MAROC clocks.
+      ipbus_clk => clk_i,
 
       -- Write port
       address_a =>  std_logic_vector(s_writeAddr),      

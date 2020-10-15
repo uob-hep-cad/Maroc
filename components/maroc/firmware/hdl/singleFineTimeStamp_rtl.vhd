@@ -54,7 +54,6 @@ entity singleFineTimeStamp is
   port (
     clk_1x_i           : in  std_logic;    --! IPBus clock ( 31.25MHz )
     clk_8x_i           : in  std_logic;    --! 4 x IPBus clock ( 250 MHz )
-    clk_8x_strobe_i    : in  std_logic;    --! Strobes every other cycle of clk_16x
     clk_16x_i           : in  std_logic;    --! eight time IPBus clock freq
     reset_i            : in std_logic;  --! Active high
     timestamp_o        : out std_logic_vector(4 downto 0);   --! Timestamp clocked with clk_1x_i.
@@ -86,7 +85,6 @@ begin  -- rtl
       data_i => trig_in_a_i,
       fastClk_i => clk_16x_i,
       fabricClk_i => clk_8x_i,
-      -- strobe_i => clk_8x_strobe_i,
       data_o => parallel_data,
       serdes_ready_o => serdes_ready
       );

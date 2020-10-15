@@ -109,14 +109,14 @@ ISERDESE2_inst : ISERDESE2
    port map (
       O => open,                       -- 1-bit output: Combinatorial output
       -- Q1 - Q8: 1-bit (each) output: Registered data outputs
-      Q1 => data_o(0),
-      Q2 => data_o(1),
-      Q3 => data_o(2),
-      Q4 => data_o(3),
-      Q5 => data_o(4),
-      Q6 => data_o(5),
-      Q7 => data_o(6),
-      Q8 => data_o(7),
+      Q1 => s_data_o(0),
+      Q2 => s_data_o(1),
+      Q3 => s_data_o(2),
+      Q4 => s_data_o(3),
+      Q5 => s_data_o(4),
+      Q6 => s_data_o(5),
+      Q7 => s_data_o(6),
+      Q8 => s_data_o(7),
       -- SHIFTOUT1, SHIFTOUT2: 1-bit (each) output: Data width expansion output ports
       SHIFTOUT1 => open,
       SHIFTOUT2 => open,

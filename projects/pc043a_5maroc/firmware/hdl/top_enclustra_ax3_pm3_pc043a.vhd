@@ -23,7 +23,7 @@ entity top is port(
           rgmii_rx_ctl: in std_logic;
           rgmii_rxc: in std_logic;
 
-       dip_switch: in std_logic_vector(3 downto 0); -- CHANGEME - No DIP switches on Enclustra
+       cfg: in std_logic_vector(3 downto 0); 
         -- Connections to MAROC
         CK_40M_P: out STD_LOGIC;
         CK_40M_N: out STD_LOGIC;
@@ -79,7 +79,8 @@ end top;
 
 architecture rtl of top is
 
-	signal clk_ipb, rst_ipb, nuke, soft_rst, phy_rst_e, userled, clk125: std_logic;
+	signal clk_ipb, rst_ipb, nuke, soft_rst, phy_rst_e, clk125: std_logic;
+	signal userled: std_logic;
 	signal mac_addr: std_logic_vector(47 downto 0);
 	signal ip_addr: std_logic_vector(31 downto 0);
 	signal ipb_out: ipb_wbus;
@@ -112,7 +113,7 @@ begin
 			ipb_out => ipb_out
 		);
 		
-	leds <= not ('0' & userled & inf_leds);
+	leds <= not (userleds & inf_leds);
 	phy_rstn <= not phy_rst_e;
 		
 	mac_addr <= X"020ddba11640"; -- Careful here, arbitrary addresses do not always work
@@ -133,7 +134,7 @@ begin
 			clk125 => clk125,
 		
       		sysclk => osc_clk,
-        	leds => leds,
+        	leds => open,
 
         	-- Connections to MAROC
         	CK_40M_P => CK_40M_P,

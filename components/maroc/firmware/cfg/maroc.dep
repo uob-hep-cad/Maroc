@@ -15,9 +15,9 @@ src arrivalTimeLUT_rtl.vhd
 src multiCounterWithReset_rtl.vhd
 src neighbourTriggerIO_rtl.vhd
 src --vhdl2008 slaves_5maroc.vhd
-src ipbusFiveMarocTriggerGenerator_rtl.vhd
+src --vhdl2008 ipbusFiveMarocTriggerGenerator_rtl.vhd
 src 5maroc_pkg.vhd
-src fiveMarocTriggerGenerator_rtl.vhd
+src --vhdl2008 fiveMarocTriggerGenerator_rtl.vhd
 src marocHoldFSM_rtl.vhd
 src stretchPulse_rtl.vhd
 src maroc_pkg.vhd

@@ -80,8 +80,6 @@ begin
   -- 500MHz clock ( clk_2x_fast )
   -------------------------------------
 
-  clko_8x <= clk_8x_s;
-
   gen_BUFIO: for iBUFIO in 0 to g_NCLKS-1 generate
     begin
       cmp_BUFIO : BUFIO
@@ -109,12 +107,13 @@ cmp_BUFR : BUFR
 
 
   
-  -------------------------------------------------------------------------
-  clkdiv: clock_divider_s6 port map(
-    clk => sysclk,
-    d25 => d25,
-    d28 => onehz
-    );
+--  -------------------------------------------------------------------------
+--  clkdiv: clock_divider_s6 port map(
+--    clk => sysclk,
+--    d25 => d25,
+--    d28 => onehz
+--    );
+onehz <= '0';
 
   --process(sysclk)
   --begin
@@ -127,6 +126,6 @@ cmp_BUFR : BUFR
   --end process;
 
   --! bit-0=DCM-lock , 1=PLL-lock, 2 .. g_NCLKS+1=bufpll_lock(0) .. buffpll_lock(g_NCLKS-1)
-  clock_status <= "0" &  pll_locked & "0000";
+  clock_status <= "0" &  pll_locked & "0";
   
 end rtl;

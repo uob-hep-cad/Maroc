@@ -23,7 +23,7 @@ entity top is port(
           rgmii_rx_ctl: in std_logic;
           rgmii_rxc: in std_logic;
 
-       cfg: in std_logic_vector(3 downto 0); 
+       -- cfg: in std_logic_vector(3 downto 0); 
         -- Connections to MAROC
         CK_40M_P: out STD_LOGIC;
         CK_40M_N: out STD_LOGIC;

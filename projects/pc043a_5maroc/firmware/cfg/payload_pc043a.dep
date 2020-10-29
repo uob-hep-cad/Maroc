@@ -6,6 +6,7 @@ addrtab triggerData.xml
 addrtab triggerCtrl.xml
 addrtab adcData.xml
 addrtab adcCtrl.xml
-src -c ipbus-firmware:components/ipbus_core ipbus_fabric.vhd
+#src -c ipbus-firmware:components/ipbus_core ipbus_fabric.vhd
+src -c ipbus-firmware:components/ipbus_core ipbus_fabric_sel.vhd
 src -c ipbus-firmware:components/ipbus_core ipbus_package.vhd
 include -c components/maroc maroc.dep

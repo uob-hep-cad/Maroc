@@ -126,6 +126,7 @@ onehz <= '0';
   --end process;
 
   --! bit-0=DCM-lock , 1=PLL-lock, 2 .. g_NCLKS+1=bufpll_lock(0) .. buffpll_lock(g_NCLKS-1)
-  clock_status <= "0" &  pll_locked & "0";
+  clock_status( clock_status'left downto 2 ) <= ( others => '0');
+  clock_status(1 downto 0)  <= pll_locked & "0";
   
 end rtl;

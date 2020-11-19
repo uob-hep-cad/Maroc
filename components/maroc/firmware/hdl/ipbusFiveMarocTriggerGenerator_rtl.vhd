@@ -154,10 +154,11 @@ architecture rtl of ipbusFiveMarocTriggerGenerator is
   signal s_adcConversionStart                  : std_logic;  -- internal coopy of adcConversionStart_o
   signal s_fineTimeStampWritePointer           : std_logic_vector(c_TIMESTAMP_BUFFER_ADDR_WIDTH-1 downto 0);
 
-  signal s_or1_ipbclk , s_or1_fast_clk : std_logic_vector(g_NMAROC-1 downto 0);  -- ! OR1 inputs synchronized and stretched/shortened onto one pulse of ipbus clock
-  signal s_or2_ipbclk , s_or2_fast_clk : std_logic_vector(g_NMAROC-1 downto 0);  -- ! OR2 inputs synchronized and stretched/shortened onto one pulse of ipbus clock
-  signal s_or_ipbclk , s_or_fast_clk   : std_logic_vector(2*g_NMAROC-1 downto 0);  -- ! OR1 and OR2 outputs concatenated.
+  signal s_or1_ipbclk , s_or1_fast_clk : std_logic_vector(g_NMAROC-1 downto 0)   := (others=>'0');  -- ! OR1 inputs synchronized and stretched/shortened onto one pulse of ipbus clock
+  signal s_or2_ipbclk , s_or2_fast_clk : std_logic_vector(g_NMAROC-1 downto 0)   := (others=>'0');  -- ! OR2 inputs synchronized and stretched/shortened onto one pulse of ipbus clock
+  signal s_or_ipbclk , s_or_fast_clk   : std_logic_vector(2*g_NMAROC-1 downto 0) := (others=>'0');  -- ! OR1 and OR2 outputs concatenated.
   signal s_or_async                    : std_logic_vector(2*g_NMAROC-1 downto 0);  -- ! combination of or1 and or2
+  -- signal s_or_async                    : std_logic_vector(2*(g_NMAROC-1)-1 downto 0);  -- ! combination of or1 and or2. Don't wire up input 4. Can't get clocking to work.
   signal s_typeA_typeB_flag            : std_logic := '0';  -- ! 0 means board is "type-A" w.r.t. trigger I/O to neighbour.  
   signal s_enable_hdmi_lvds            : std_logic := '0';  -- Set high to turn on LVDS outputs. By default turned off.
 
@@ -412,36 +413,43 @@ begin
   s_or1_ipbclk   <= s_or_ipbclk(g_NMAROC-1 downto 0);
 
   s_or_async <= or2_a_i & or1_a_i;
+  -- s_or_async <= or2_a_i(3 downto 0) &  or1_a_i(3 downto 0);
 
 -- fime-grain timestamp generation and buffering. Also synchronizes the
 -- incoming async trigger signals onto IPBus and fast-clock domains.
 -- OR1 signals
-  cmp_ORSync : entity work.fineTimeStamp
-    generic map (
-      g_ADDR_WIDTH => c_TIMESTAMP_BUFFER_ADDR_WIDTH,
-      g_NMAROC     => 2*g_NMAROC,
-      g_NCLKS      => g_NCLKS) 
-    port map (
-      ipbus_clk_i          => ipb_clk_i,
-      clk_1x_i           => clk_1x_i,
-      clk_8x_i           => clk_8x_i,
-      clk_16x_i          => clk_16x_i,
-      reset_i            => s_counter_reset,
-      event_trig_i       => s_adcConversionStart,
-      trigger_number_i   => s_conversion_counter,
-      coarse_timestamp_i => s_timeStamp ,
-      trig_in_a_i        => s_or_async,
-      trig_out_8x_o      => s_or_fast_clk,
-      trig_out_1x_o      => s_or_ipbclk,
-      write_address_o    => s_fineTimeStampWritePointer,
+-- BODGE BODGE BODGE - remove for now.
+--  cmp_ORSync : entity work.fineTimeStamp
+--    generic map (
+--      g_ADDR_WIDTH => c_TIMESTAMP_BUFFER_ADDR_WIDTH,
+--      --g_NMAROC     => 2*(g_NMAROC-1),
+--      g_NMAROC     => 2*g_NMAROC,
+--      g_NCLKS      => g_NCLKS) 
+--    port map (
+--      ipbus_clk_i          => ipb_clk_i,
+--      clk_1x_i           => clk_1x_i,
+--      clk_8x_i           => clk_8x_i,
+--      clk_16x_i          => clk_16x_i,
+--      reset_i            => s_counter_reset,
+--      event_trig_i       => s_adcConversionStart,
+--      trigger_number_i   => s_conversion_counter,
+--      coarse_timestamp_i => s_timeStamp ,
+--      trig_in_a_i        => s_or_async,
+--      --trig_out_8x_o      => s_or_fast_clk,
+--      --trig_out_1x_o      => s_or_ipbclk,
+--      -- LEave out input 4 for now.
+--      trig_out_8x_o      => s_or_fast_clk(2*(g_NMAROC-1)-1 downto 0),
+--      trig_out_1x_o      => s_or_ipbclk(2*(g_NMAROC-1)-1 downto 0),
 
-      -- IPBus to read data.
-      ipbus_i => data_ipbus_i,
-      ipbus_o => data_ipbus_o
+--      write_address_o    => s_fineTimeStampWritePointer,
 
-      );
+--      -- IPBus to read data.
+--      ipbus_i => data_ipbus_i,
+--      ipbus_o => data_ipbus_o
 
+--      );
 
+-- 2*(g_NMAROC-1)-1 downto 0
 ------------------------------------------------------------------------------------------------------------------------------------
 -- Combine OR1 , OR2 signals together and send them off chip.
 -- Receive OR1 , OR2 signals from neighbouring FPGA

@@ -66,11 +66,11 @@ entity top is port(
         --HDMI1_DATA_P: inout std_logic_vector(2 downto 0);
         --HDMI1_DATA_N: inout std_logic_vector(2 downto 0);
         HDMI1_SIGNALS_P : inout std_logic_vector(3 downto 0);
-        HDMI1_SIGNALS_N : inout std_logic_vector(3 downto 0);
+        HDMI1_SIGNALS_N : inout std_logic_vector(3 downto 0)
         
         -- GPIO header for debugging:
-        GPIO_HDR_O: out STD_LOGIC_VECTOR(5 downto 0); -- CHANGEME - No GPIO on Enclustra
-        GPIO_HDR_I: in STD_LOGIC_VECTOR(7 downto 6)   -- CHANGEME - No GPIO on Enclustra
+        -- GPIO_HDR_O: out STD_LOGIC_VECTOR(5 downto 0); -- CHANGEME - No GPIO on Enclustra
+        -- GPIO_HDR_I: in STD_LOGIC_VECTOR(7 downto 6)   -- CHANGEME - No GPIO on Enclustra
 
 
 	);
@@ -79,6 +79,11 @@ end top;
 
 architecture rtl of top is
 
+    -- CHANGEME: dummy signals for non-existent GPIO. (Move to unused pins on FMC)
+    signal GPIO_HDR_O: STD_LOGIC_VECTOR(5 downto 0)  := (others=>'0'); -- CHANGEME - No GPIO on Enclustra
+    signal GPIO_HDR_I: STD_LOGIC_VECTOR(7 downto 6)  := (others=>'0');   -- CHANGEME - No GPIO on Enclustra
+
+    
 	signal clk_ipb, rst_ipb, nuke, soft_rst, phy_rst_e, clk125: std_logic;
 	signal userled: std_logic;
 	signal mac_addr: std_logic_vector(47 downto 0);

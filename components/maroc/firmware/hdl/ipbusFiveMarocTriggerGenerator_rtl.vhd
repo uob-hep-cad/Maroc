@@ -419,35 +419,35 @@ begin
 -- incoming async trigger signals onto IPBus and fast-clock domains.
 -- OR1 signals
 -- BODGE BODGE BODGE - remove for now.
---  cmp_ORSync : entity work.fineTimeStamp
---    generic map (
---      g_ADDR_WIDTH => c_TIMESTAMP_BUFFER_ADDR_WIDTH,
---      --g_NMAROC     => 2*(g_NMAROC-1),
---      g_NMAROC     => 2*g_NMAROC,
---      g_NCLKS      => g_NCLKS) 
---    port map (
---      ipbus_clk_i          => ipb_clk_i,
---      clk_1x_i           => clk_1x_i,
---      clk_8x_i           => clk_8x_i,
---      clk_16x_i          => clk_16x_i,
---      reset_i            => s_counter_reset,
---      event_trig_i       => s_adcConversionStart,
---      trigger_number_i   => s_conversion_counter,
---      coarse_timestamp_i => s_timeStamp ,
---      trig_in_a_i        => s_or_async,
---      --trig_out_8x_o      => s_or_fast_clk,
---      --trig_out_1x_o      => s_or_ipbclk,
---      -- LEave out input 4 for now.
---      trig_out_8x_o      => s_or_fast_clk(2*(g_NMAROC-1)-1 downto 0),
---      trig_out_1x_o      => s_or_ipbclk(2*(g_NMAROC-1)-1 downto 0),
+  cmp_ORSync : entity work.fineTimeStamp
+    generic map (
+      g_ADDR_WIDTH => c_TIMESTAMP_BUFFER_ADDR_WIDTH,
+      --g_NMAROC     => 2*(g_NMAROC-1),
+      g_NMAROC     => 2*g_NMAROC,
+      g_NCLKS      => g_NCLKS) 
+    port map (
+      ipbus_clk_i          => ipb_clk_i,
+      clk_1x_i           => clk_1x_i,
+      clk_8x_i           => clk_8x_i,
+      clk_16x_i          => clk_16x_i,
+      reset_i            => s_counter_reset,
+      event_trig_i       => s_adcConversionStart,
+      trigger_number_i   => s_conversion_counter,
+      coarse_timestamp_i => s_timeStamp ,
+      trig_in_a_i        => s_or_async,
+      trig_out_8x_o      => s_or_fast_clk,
+      trig_out_1x_o      => s_or_ipbclk,
+      -- LEave out input 4 for now.
+      --trig_out_8x_o      => s_or_fast_clk(2*(g_NMAROC-1)-1 downto 0),
+      --trig_out_1x_o      => s_or_ipbclk(2*(g_NMAROC-1)-1 downto 0),
 
---      write_address_o    => s_fineTimeStampWritePointer,
+      write_address_o    => s_fineTimeStampWritePointer,
 
---      -- IPBus to read data.
---      ipbus_i => data_ipbus_i,
---      ipbus_o => data_ipbus_o
+      -- IPBus to read data.
+      ipbus_i => data_ipbus_i,
+      ipbus_o => data_ipbus_o
 
---      );
+      );
 
 -- 2*(g_NMAROC-1)-1 downto 0
 ------------------------------------------------------------------------------------------------------------------------------------

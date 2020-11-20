@@ -42,7 +42,7 @@ architecture rtl of clocks_a7_extclk_multiclk_xtal is
   -- Input clock buffering / unused connectors
   signal extclk     : std_logic;
 
-  signal clk_1x_s : std_logic;
+  signal clk_1x_s , clk_16x_buffered_s: std_logic;
   signal clk_8x_s : std_logic;
   signal clk_16x_s : std_logic;
   
@@ -50,6 +50,7 @@ architecture rtl of clocks_a7_extclk_multiclk_xtal is
   signal pll_locked : std_logic:= '0';  -- Lock status of two PLLs
 
   signal s_rst: std_logic := '0';
+  signal s_extclk, s_extclk_buffered : std_logic ;
   
   component clock_divider_s6 port(
     clk: in std_logic;
@@ -60,6 +61,21 @@ architecture rtl of clocks_a7_extclk_multiclk_xtal is
 
 begin
 
+cmp_clk_buffer: IBUFGDS 
+    generic map(DIFF_TERM=>TRUE,--DifferentialTermination
+    IBUF_LOW_PWR=>TRUE,--Lowpower(TRUE)vs.performance(FALSE)settingforreferencedI/Ostandards
+    IOSTANDARD=>"DEFAULT")
+    port map
+    (O=>s_extclk,--Clockbufferoutput
+    I=>extclk_P,--Diff_pclockbufferinput(connectdirectlytotop-levelport)
+    IB=>extclk_N--Diff_nclockbufferinput(connectdirectlytotop-levelport)
+    );
+
+  BUFG_inst : BUFG
+   port map (
+      O => s_extclk_buffered, -- 1-bit output: Clock output
+      I => s_extclk  -- 1-bit input: Clock input
+   );
 
   cmp_clk_gen: entity work.clk_adcs
   port map
@@ -72,10 +88,20 @@ begin
   reset   => '0', 
   locked  => pll_locked,
  -- Clock in ports
-  clk_in1_p   => extclk_P,
-  clk_in1_n   => extclk_N
+  clk_in1   => s_extclk_buffered
   );
   
+  --- Stick in a multi-region clock buffer. 
+  -- needed because the trigger inputs are spread across 2 clock regions
+  -- and BUFIO can only reach I/O within their clock region
+  -- and BUFG can only reach BUFIO with their clock region.
+BUFMR_inst : BUFMR
+   port map (
+      O => clk_16x_buffered_s, -- 1-bit output: Clock output (connect to BUFIOs/BUFRs)
+      I => clk_16x_s  -- 1-bit input: Clock input (Connect to IBUF)
+   );
+
+
   -- Output buffering for IPBus clock , 250MHz clock ( clk_fast) and
   -- 500MHz clock ( clk_2x_fast )
   -------------------------------------
@@ -85,7 +111,7 @@ begin
       cmp_BUFIO : BUFIO
    port map (
       O => clko_16x(iBUFIO), -- 1-bit output: Clock output (connect to I/O clock loads).
-      I => clk_16x_s  -- 1-bit input: Clock input (connect to an IBUF or BUFMR).
+      I => clk_16x_buffered_s  -- 1-bit input: Clock input (connect to an IBUF or BUFMR).
    );
 
     end generate gen_BUFIO;

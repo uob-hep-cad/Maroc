@@ -91,6 +91,9 @@ architecture rtl of top is
 	signal ipb_out: ipb_wbus;
 	signal ipb_in: ipb_rbus;
 	signal inf_leds: std_logic_vector(1 downto 0);
+
+    attribute keep : string;
+    attribute keep of nuke : signal is "true"; -- Bodge to keep un-used net 
 	
 begin
 

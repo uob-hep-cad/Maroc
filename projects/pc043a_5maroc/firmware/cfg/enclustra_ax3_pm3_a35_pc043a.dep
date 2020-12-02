@@ -1,4 +1,4 @@
 src top_enclustra_ax3_pm3_pc043a.vhd
 src --cd ../ucf pc043d_ax3_pm3.tcl
-include -c ipbus-firmware:boards/enclustra_ax3_pm3/synth a35.dep
-include -c ipbus-firmware:boards/enclustra_ax3_pm3/synth enclustra_ax3_pm3.dep
+include -c enclustra:boards/enclustra_ax3_pm3/synth a35.dep
+include -c enclustra:boards/enclustra_ax3_pm3/synth enclustra_ax3_pm3_macprom.dep

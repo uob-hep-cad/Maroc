@@ -1,5 +1,5 @@
 <node id="shift_reg"    description="Interface to MAROC shift register" fwinfo="endpoint">
-	<node id="SrDataOut"    address="0x00000000" fwinfo="endpoint;width=0"/>
+	<node id="SrDataOut"    address="0x00000000" permission="r" fwinfo="endpoint;width=0"/>
 	<node id="SrDataIn"     address="0x00000020" fwinfo="endpoint;width=0"/>
 	<node id="SrCtrl"       address="0x00000040" fwinfo="endpoint;width=0"/>
 </node>

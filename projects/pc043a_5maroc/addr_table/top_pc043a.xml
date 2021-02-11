@@ -1,30 +1,30 @@
 <node id="TOP">
-	<node id="FirmwareId"	address="0x00000000"	fwinfo="endpoint;width=0"/>
-	<node id="GPIO"			address="0x00000001"    fwinfo="endpoint;width=0"/>
-	<node id="select"		address="0x00000002"    fwinfo="endpoint;width=0"/>
-	<node id="mask"			address="0x00000003"    fwinfo="endpoint;width=0"/>
+	<node id="FirmwareId"	address="0x00000000" permission="r" fwinfo="endpoint;width=0"/>
+	<node id="GPIO"		address="0x00000001"    fwinfo="endpoint;width=0"/>
+	<node id="select"	address="0x00000002"    fwinfo="endpoint;width=0"/>
+	<node id="mask"		address="0x00000003"    fwinfo="endpoint;width=0"/>
 	<node id="controlReg"	address="0x00000004"    fwinfo="endpoint;width=0"/>
 
-	<node id="scSr" 		address="0x00000080" module="file://shift_reg.xml"/>
-    <node id="rSr" 			address="0x00000100" module="file://shift_reg.xml"/>
+	<node id="scSr" 	address="0x00000080" module="file://shift_reg.xml"/>
+	<node id="rSr" 		address="0x00000100" module="file://shift_reg.xml"/>
  
-    <node id="adc0Data" 	address="0x00001000" module="file://adcData.xml"/>
-    <node id="adc0Ctrl"     address="0x00001200" module="file://adcCtrl.xml"/>
+	<node id="adc0Data" 	address="0x00001000" module="file://adcData.xml"/>
+	<node id="adc0Ctrl"     address="0x00001200" module="file://adcCtrl.xml"/>
 
-    <node id="adc1Data"     address="0x00002000" module="file://adcData.xml"/>
-    <node id="adc1Ctrl"     address="0x00002200" module="file://adcCtrl.xml"/>
+	<node id="adc1Data"     address="0x00002000" module="file://adcData.xml"/>
+	<node id="adc1Ctrl"     address="0x00002200" module="file://adcCtrl.xml"/>
 
-    <node id="adc2Data"     address="0x00003000" module="file://adcData.xml"/>
-    <node id="adc2Ctrl"     address="0x00003200" module="file://adcCtrl.xml"/>
+	<node id="adc2Data"     address="0x00003000" module="file://adcData.xml"/>
+	<node id="adc2Ctrl"     address="0x00003200" module="file://adcCtrl.xml"/>
 
-    <node id="adc3Data"     address="0x00004000" module="file://adcData.xml"/>
-    <node id="adc3Ctrl"     address="0x00004200" module="file://adcCtrl.xml"/>
+	<node id="adc3Data"     address="0x00004000" module="file://adcData.xml"/>
+	<node id="adc3Ctrl"     address="0x00004200" module="file://adcCtrl.xml"/>
 
-    <node id="adc4Data"     address="0x00005000" module="file://adcData.xml"/>
-    <node id="adc4Ctrl"     address="0x00005200" module="file://adcCtrl.xml"/>
+	<node id="adc4Data"     address="0x00005000" module="file://adcData.xml"/>
+	<node id="adc4Ctrl"     address="0x00005200" module="file://adcCtrl.xml"/>
 
-   <node id="triggerData"   address="0x00007200" module="file://triggerData.xml"/>
-   <node id="triggerCtrl"   address="0x00007000" module="file://triggerCtrl.xml"/>
+	<node id="triggerData"  address="0x00007200" module="file://triggerData.xml"/>
+	<node id="triggerCtrl"  address="0x00007000" module="file://triggerCtrl.xml"/>
 
 </node>
 

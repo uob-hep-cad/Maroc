@@ -95,6 +95,9 @@ architecture rtl of top is
     attribute keep : string;
     attribute keep of nuke : signal is "true"; -- Bodge to keep un-used net 
 	
+    attribute mark_debug : string;
+    attribute mark_debug of nuke,soft_rst : signal is "true"; -- Bodge to keep un-used net 
+
 begin
 
 -- Infrastructure

@@ -16,8 +16,16 @@ entity ipbus_ver is
 	
 end ipbus_ver;
 
+  
 architecture rtl of ipbus_ver is
 
+  attribute mark_debug : string;
+  attribute mark_debug of ipbus_in,ipbus_out : signal is "true";
+  
+  attribute keep: string;
+  attribute keep of ipbus_in,ipbus_out: signal is "true";
+ 
+ 
 begin
 
   ipbus_out.ipb_rdata <= X"a619" & X"1008"; -- Lower 16b are ipbus firmware build ID (temporary arrangement).

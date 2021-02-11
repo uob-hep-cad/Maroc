@@ -168,6 +168,8 @@ architecture rtl of ipbusFiveMarocTriggerGenerator is
   signal s_or1_from_neighbour , s_or2_from_neighbour : std_logic := '0';  --! OR1,OR2 combination from neigbouring FPGA
   signal s_ipb_strobe_d1 , s_ipb_strobe_d2           : std_logic := '0';  -- used to generate ACK
   
+  signal s_or1_from_neighbour_p1 , s_or2_from_neighbour_p1 : std_logic;
+  
 begin
 
   -- read/write to registers storing data to/from MAROC and to control reg.
@@ -461,12 +463,18 @@ begin
       boardType_na_b_i     => s_typeA_typeB_flag,
       hdmi_inout_signals_p => hdmi_inout_signals_p,
       hdmi_inout_signals_n => hdmi_inout_signals_n,
-      or1_from_neighbour_o  => s_or1_from_neighbour,
+      or1_from_neighbour_o  => s_or1_from_neighbour_p1,
       or1_to_neighbour_i    => s_or1_fast_clk,
-      or2_from_neighbour_o  => s_or2_from_neighbour,
+      or2_from_neighbour_o  => s_or2_from_neighbour_p1,
       or2_to_neighbour_i    => s_or2_fast_clk
       );
 
+  -- desperate measures to get timing closure
+  --s_or1_from_neighbour <= s_or1_from_neighbour_p1 when rising_edge(clk_8x_i);
+  --s_or2_from_neighbour <= s_or2_from_neighbour_p1 when rising_edge(clk_8x_i);
+  s_or1_from_neighbour <= '0';
+  s_or2_from_neighbour <= '0';
+  
   -- Output signals to/from neighbouring board for debugging.
   or1_from_neighbour_o <= s_or1_from_neighbour;
   or1_to_neighbour_o   <= s_or1_fast_clk(0) or s_or1_fast_clk(1) or s_or1_fast_clk(2) or s_or1_fast_clk(3) or s_or1_fast_clk(4);

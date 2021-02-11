@@ -97,8 +97,8 @@ architecture rtl of payload is
         signal clock_status : std_logic_vector(c_NCLKS+1 downto 0) := ( others => '0' );  --! locked/status lines for PLL, DCM, BUFPLLs
 	signal mac_txd, mac_rxd : STD_LOGIC_VECTOR(7 downto 0);
 	signal mac_txdvld, mac_txack, mac_rxclko, mac_rxdvld, mac_rxgoodframe, mac_rxbadframe : STD_LOGIC;
-	signal ipb_master_out : ipb_wbus;
-	signal ipb_master_in : ipb_rbus;
+	--signal ipb_master_out : ipb_wbus;
+	--signal ipb_master_in : ipb_rbus;
 	signal mac_addr: std_logic_vector(47 downto 0);
 	signal ip_addr: std_logic_vector(31 downto 0);
 
@@ -119,6 +119,11 @@ architecture rtl of payload is
         -- try for multiple 500MHz clocks....
         signal clk_16x: std_logic_vector(c_NCLKS-1 downto 0); 
          
+          attribute mark_debug : string;
+          attribute mark_debug of ipb_in,ipb_out,nuke,soft_rst: signal is "true";
+          attribute keep: string;
+          attribute keep of ipb_in,ipb_out,nuke,soft_rst: signal is "true";
+          
 begin
 
     ipb_clk_n <= not ipb_clk;
@@ -229,8 +234,8 @@ begin
 		ipb_clk => ipb_clk,
         clk_1x => clk_1x,
 		rst => ipb_rst,
-		ipb_in => ipb_master_out,
-		ipb_out => ipb_master_in,
+		ipb_in => ipb_in,
+		ipb_out => ipb_out,
 
                
                 clock_status => clock_status,

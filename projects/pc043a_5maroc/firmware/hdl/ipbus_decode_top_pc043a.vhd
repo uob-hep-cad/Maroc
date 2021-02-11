@@ -17,7 +17,7 @@ package ipbus_decode_top_pc043a is
   subtype ipbus_sel_t is std_logic_vector(IPBUS_SEL_WIDTH - 1 downto 0);
   function ipbus_sel_top_pc043a(addr : in std_logic_vector(31 downto 0)) return ipbus_sel_t;
 
--- START automatically  generated VHDL the Wed Oct 14 19:40:06 2020 
+-- START automatically generated VHDL (Wed Feb 10 14:57:44 2021)
   constant N_SLV_FIRMWAREID: integer := 0;
   constant N_SLV_GPIO: integer := 1;
   constant N_SLV_SELECT: integer := 2;
@@ -49,7 +49,7 @@ package body ipbus_decode_top_pc043a is
     variable sel: ipbus_sel_t;
   begin
 
--- START automatically  generated VHDL the Wed Oct 14 19:40:06 2020 
+-- START automatically generated VHDL (Wed Feb 10 14:57:44 2021)
     if    std_match(addr, "-----------------000--000----000") then
       sel := ipbus_sel_t(to_unsigned(N_SLV_FIRMWAREID, IPBUS_SEL_WIDTH)); -- FirmwareId / base 0x00000000 / mask 0x00007387
     elsif std_match(addr, "-----------------000--000----001") then
@@ -64,30 +64,30 @@ package body ipbus_decode_top_pc043a is
       sel := ipbus_sel_t(to_unsigned(N_SLV_SCSR, IPBUS_SEL_WIDTH)); -- scSr / base 0x00000080 / mask 0x00007380
     elsif std_match(addr, "-----------------000--010-------") then
       sel := ipbus_sel_t(to_unsigned(N_SLV_RSR, IPBUS_SEL_WIDTH)); -- rSr / base 0x00000100 / mask 0x00007380
-    elsif std_match(addr, "-----------------001--000-------") then
-      sel := ipbus_sel_t(to_unsigned(N_SLV_ADC0DATA, IPBUS_SEL_WIDTH)); -- adc0Data / base 0x00001000 / mask 0x00007380
+    elsif std_match(addr, "-----------------001--0---------") then
+      sel := ipbus_sel_t(to_unsigned(N_SLV_ADC0DATA, IPBUS_SEL_WIDTH)); -- adc0Data / base 0x00001000 / mask 0x00007200
     elsif std_match(addr, "-----------------001--100----0--") then
       sel := ipbus_sel_t(to_unsigned(N_SLV_ADC0CTRL, IPBUS_SEL_WIDTH)); -- adc0Ctrl / base 0x00001200 / mask 0x00007384
-    elsif std_match(addr, "-----------------010--000-------") then
-      sel := ipbus_sel_t(to_unsigned(N_SLV_ADC1DATA, IPBUS_SEL_WIDTH)); -- adc1Data / base 0x00002000 / mask 0x00007380
+    elsif std_match(addr, "-----------------010--0---------") then
+      sel := ipbus_sel_t(to_unsigned(N_SLV_ADC1DATA, IPBUS_SEL_WIDTH)); -- adc1Data / base 0x00002000 / mask 0x00007200
     elsif std_match(addr, "-----------------010--100----0--") then
       sel := ipbus_sel_t(to_unsigned(N_SLV_ADC1CTRL, IPBUS_SEL_WIDTH)); -- adc1Ctrl / base 0x00002200 / mask 0x00007384
-    elsif std_match(addr, "-----------------011--000-------") then
-      sel := ipbus_sel_t(to_unsigned(N_SLV_ADC2DATA, IPBUS_SEL_WIDTH)); -- adc2Data / base 0x00003000 / mask 0x00007380
+    elsif std_match(addr, "-----------------011--0---------") then
+      sel := ipbus_sel_t(to_unsigned(N_SLV_ADC2DATA, IPBUS_SEL_WIDTH)); -- adc2Data / base 0x00003000 / mask 0x00007200
     elsif std_match(addr, "-----------------011--100----0--") then
       sel := ipbus_sel_t(to_unsigned(N_SLV_ADC2CTRL, IPBUS_SEL_WIDTH)); -- adc2Ctrl / base 0x00003200 / mask 0x00007384
-    elsif std_match(addr, "-----------------100--000-------") then
-      sel := ipbus_sel_t(to_unsigned(N_SLV_ADC3DATA, IPBUS_SEL_WIDTH)); -- adc3Data / base 0x00004000 / mask 0x00007380
+    elsif std_match(addr, "-----------------100--0---------") then
+      sel := ipbus_sel_t(to_unsigned(N_SLV_ADC3DATA, IPBUS_SEL_WIDTH)); -- adc3Data / base 0x00004000 / mask 0x00007200
     elsif std_match(addr, "-----------------100--100----0--") then
       sel := ipbus_sel_t(to_unsigned(N_SLV_ADC3CTRL, IPBUS_SEL_WIDTH)); -- adc3Ctrl / base 0x00004200 / mask 0x00007384
-    elsif std_match(addr, "-----------------101--000-------") then
-      sel := ipbus_sel_t(to_unsigned(N_SLV_ADC4DATA, IPBUS_SEL_WIDTH)); -- adc4Data / base 0x00005000 / mask 0x00007380
+    elsif std_match(addr, "-----------------101--0---------") then
+      sel := ipbus_sel_t(to_unsigned(N_SLV_ADC4DATA, IPBUS_SEL_WIDTH)); -- adc4Data / base 0x00005000 / mask 0x00007200
     elsif std_match(addr, "-----------------101--100----0--") then
       sel := ipbus_sel_t(to_unsigned(N_SLV_ADC4CTRL, IPBUS_SEL_WIDTH)); -- adc4Ctrl / base 0x00005200 / mask 0x00007384
     elsif std_match(addr, "-----------------111--000-------") then
       sel := ipbus_sel_t(to_unsigned(N_SLV_TRIGGERCTRL, IPBUS_SEL_WIDTH)); -- triggerCtrl / base 0x00007000 / mask 0x00007380
-    elsif std_match(addr, "-----------------111--100-------") then
-      sel := ipbus_sel_t(to_unsigned(N_SLV_TRIGGERDATA, IPBUS_SEL_WIDTH)); -- triggerData / base 0x00007200 / mask 0x00007380
+    elsif std_match(addr, "-----------------111--1---------") then
+      sel := ipbus_sel_t(to_unsigned(N_SLV_TRIGGERDATA, IPBUS_SEL_WIDTH)); -- triggerData / base 0x00007200 / mask 0x00007200
 -- END automatically generated VHDL
 
     else

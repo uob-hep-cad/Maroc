@@ -1,6 +1,6 @@
 <node id="adcCtrl" description="Control registers for ADC interface" fwinfo="endpoint">
 	<node id="adcCtrl" address="0x000" fwinfo="endpoint;width=0"/>
-	<node id="adcBitCount" address="0x001" fwinfo="endpoint;width=0"/>
-	<node id="adcWritePointer" address="0x002" fwinfo="endpoint;width=0"/>
-	<node id="adcTestLocation" address="0x003" fwinfo="endpoint;width=0"/>
+	<node id="adcBitCount" address="0x001" permission="r" fwinfo="endpoint;width=0"/>
+	<node id="adcWritePointer" address="0x002" permission="r" fwinfo="endpoint;width=0"/>
+	<node id="adcTestLocation" address="0x003" permission="r" fwinfo="endpoint;width=0"/>
 </node>

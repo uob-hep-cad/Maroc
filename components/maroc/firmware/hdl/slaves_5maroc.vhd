@@ -83,6 +83,16 @@ architecture rtl of slaves_5maroc is
   signal s_strobe : std_logic;
   signal s_lines_to_pulse : std_logic_vector( s_pulsed_lines'range );
 
+  signal s_sel : ipbus_sel_t;
+  
+  attribute mark_debug : string;
+  attribute mark_debug of s_sel : signal is "true";
+  
+  attribute keep: string;
+  attribute keep of s_sel: signal is "true";
+          
+ -- attribute mark_debug of ipb_in,ipb_out,ipbw,ipbr: signal is "true";
+
 begin
 
 --  Generate HDMI I/O for debugging.
@@ -109,12 +119,14 @@ begin
   --   IB => hdmi_input_signals.HDMI0_DATA_N(2)
   --   );
           
+  s_sel <= ipbus_sel_top_pc043a(ipb_in.ipb_addr);
+  
   fabric: entity work.ipbus_fabric_sel
     generic map(
       NSLV => N_SLAVES,
       SEL_WIDTH => IPBUS_SEL_WIDTH )
     port map(
-      sel => ipbus_sel_top_pc043a(ipb_in.ipb_addr),
+      sel => s_sel,
       ipb_in => ipb_in,
       ipb_out => ipb_out,
       ipb_to_slaves => ipbw,

@@ -1,5 +1,6 @@
 # Top level dep file for overload on TLU
 
 setup build_settings_a35.tcl
+@vivado.mcsfile_options ="-size 64 -interface SPIx4"
 include enclustra_ax3_pm3_a35_pc043a.dep
 include payload_pc043a.dep

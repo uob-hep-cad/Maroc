@@ -87,6 +87,7 @@ architecture rtl of slaves_5maroc is
   
   attribute mark_debug : string;
   attribute mark_debug of s_sel : signal is "true";
+  attribute mark_debug of externalHdmiTrigger_a_i , maroc_input_signals , maroc_output_signals, s_marocADCBusySummary: signal is "true";
   
   attribute keep: string;
   attribute keep of s_sel: signal is "true";

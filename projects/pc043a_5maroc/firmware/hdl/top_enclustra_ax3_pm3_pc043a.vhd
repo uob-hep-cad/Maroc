@@ -98,6 +98,27 @@ architecture rtl of top is
     attribute mark_debug : string;
     attribute mark_debug of nuke,soft_rst : signal is "true"; -- Bodge to keep un-used net 
 
+    attribute mark_debug of HOLD2_2V5 ,
+        	HOLD1_2V5 ,
+        	OR1_2V5 ,
+        	OR0_2V5 ,
+			EN_OTAQ_2V5 , 
+			CTEST_2V5 , 
+			ADC_DAV_2V5 , 
+			OUT_ADC_2V5 , 
+			START_ADC_2V5_N , 
+			RST_ADC_2V5_N , 
+			RST_SC_2V5_N , 
+			Q_SC_2V5 , 
+			D_SC_2V5 , 
+			RST_R_2V5_N , 
+			Q_R_2V5 , 
+			D_R_2V5 , 
+			CK_R_2V5 , 
+			CK_SC_2V5 , 
+        -- lines to select marocs for setup and control
+			MAROC_SELECT_2V5 : signal is "true";
+			
 begin
 
 -- Infrastructure
@@ -133,7 +154,7 @@ begin
 -- ipbus slaves live in the entity below, and can expose top-level ports
 -- The ipbus fabric is instantiated within.
 
-	slaves: entity work.payload
+	payload: entity work.payload
 		port map(
 			ipb_clk => clk_ipb,
 			ipb_rst => rst_ipb,

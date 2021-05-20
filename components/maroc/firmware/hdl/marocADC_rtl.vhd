@@ -65,13 +65,14 @@ entity marocADC is
     g_BUSWIDTH    : positive := 32
     );
   port(
-    clk_i        : in STD_LOGIC;
+    clk_i        : in STD_LOGIC;        --! Clock for MAROC logic
     reset_i      : in STD_LOGIC;
 
     start_p_i    : in STD_LOGIC;        --! Pulse high to start conversion.
     end_p_o      : out STD_LOGIC;       --! Pulses high at end of conversion
     status_o     : out STD_LOGIC;       --! goes high during conversion
 
+    ipbus_clk_i : in std_logic;         --! Clock for IPBus
     ipbus_i : in  ipb_wbus;             --! Signals from IPBus master for data
     ipbus_o : out ipb_rbus;             --! Signals to IPBus master
 
@@ -99,7 +100,7 @@ end marocADC;
 --============================================================================
 architecture rtl of marocADC is
 
-  signal s_status : std_logic;   --! Control line from ADC interface. Goes high when conversion in progress
+  -- signal s_status : std_logic;   --! Control line from ADC interface. Goes high when conversion in progress
 
   --! Shift register
   signal s_shiftReg : std_logic_vector(g_BUSWIDTH-1 downto 0) := (others => '0');
@@ -196,18 +197,18 @@ begin
       data_width => g_BUSWIDTH,
       ram_address_width => g_ADDRWIDTH )
     Port map (
+    
+      -- Write port
 --      Wren_a    =>  s_wen_d1,
       Wren_a    =>  s_wen,
-      clk       =>  clk_i,
-      
-      -- CHANGEME - separate IPBus and MAROC clocks.
-      ipbus_clk => clk_i,
-
-      -- Write port
+      clk       =>  clk_i,    
       address_a =>  std_logic_vector(s_writeAddr),      
       data_a     =>  s_dataToDPR,
 
       -- IPBus for read-port
+      -- separate IPBus (read port) and MAROC (write port) clocks.
+      ipbus_clk => ipbus_clk_i,
+
       ipbus_i => ipbus_i,
       ipbus_o => ipbus_o
 

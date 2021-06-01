@@ -279,7 +279,8 @@ begin
 --D control_ipbus_o.ipb_ack <= control_ipbus_i.ipb_strobe and s_ipb_strobe_d2;
   control_ipbus_o.ipb_err <= '0';
 
-
+-- FIX ME - this is massively unsafe w.r.t. CDR from clk_1x
+-- !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 --! purpose: Controls state of s_internalTrigger
 --! inputs : ipb_clk_i , control_ipbus_i 
 --! outputs: 
@@ -297,6 +298,8 @@ begin
     end if;
   end process p_internalTrigger;
 
+-- FIX ME - this is massively unsafe w.r.t. CDR from clk_1x
+-- !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 --! purpose: Controls state of s_counter_reset
 --! inputs : ipb_clk_i , control_ipbus_i 
 --! outputs: 

@@ -130,21 +130,27 @@ set_property IOSTANDARD LVDS_25 [get_ports CK_40M_P]
 #set_property PACKAGE_PIN E3 [get_ports FMC_CLK1_M2C_P]
 #set_property IOSTANDARD LVCMOS25 [get_ports FMC_CLK1_M2C_P]
 
-#FMC LA00
-set_property PACKAGE_PIN P5 [get_ports MAROC_SELECT_2V5[0]]
+#FMC LA28*
+set_property PACKAGE_PIN H4 [get_ports MAROC_SELECT_2V5[0]]
 set_property IOSTANDARD LVCMOS25 [get_ports MAROC_SELECT_2V5[0]]
+
+#FMC LA00
 set_property PACKAGE_PIN N5 [get_ports OR1_2V5[3]]
 set_property IOSTANDARD LVCMOS25 [get_ports OR1_2V5[3]]
 
-#FMC LA01
-set_property PACKAGE_PIN P3 [get_ports MAROC_SELECT_2V5[1]]
+#FMC LA31
+set_property PACKAGE_PIN C6 [get_ports MAROC_SELECT_2V5[1]]
 set_property IOSTANDARD LVCMOS25 [get_ports MAROC_SELECT_2V5[1]]
+
+#FMC LA01*
 set_property PACKAGE_PIN P4 [get_ports OR0_2V5[3]]
 set_property IOSTANDARD LVCMOS25 [get_ports OR0_2V5[3]]
 
-#FMC LA02
-set_property PACKAGE_PIN N6 [get_ports MAROC_SELECT_2V5[2]]
+#FMC LA28
+set_property PACKAGE_PIN J4 [get_ports MAROC_SELECT_2V5[2]]
 set_property IOSTANDARD LVCMOS25 [get_ports MAROC_SELECT_2V5[2]]
+
+#FMC LA02
 set_property PACKAGE_PIN M6 [get_ports ADC_DAV_2V5[3]]
 set_property IOSTANDARD LVCMOS25 [get_ports ADC_DAV_2V5[3]]
 

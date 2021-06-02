@@ -20,6 +20,7 @@ src 5maroc_pkg.vhd
 src --vhdl2008 fiveMarocTriggerGenerator_rtl.vhd
 src marocHoldFSM_rtl.vhd
 src stretchPulse_rtl.vhd
+src pulseClockDomainCrossing_rtl.vhd
 src maroc_pkg.vhd
 src -c projects/pc043a_5maroc ipbus_decode_top_pc043a.vhd
 

@@ -87,9 +87,10 @@ architecture rtl of slaves_5maroc is
   
   attribute mark_debug : string;
   attribute mark_debug of s_sel : signal is "true";
+  attribute mark_debug of externalHdmiTrigger_a_i , maroc_input_signals , maroc_output_signals, s_marocADCBusySummary: signal is "true";
   
   attribute keep: string;
-  attribute keep of s_sel: signal is "true";
+  attribute keep of s_sel, clk_1x: signal is "true";
           
  -- attribute mark_debug of ipb_in,ipb_out,ipbw,ipbr: signal is "true";
 
@@ -358,7 +359,7 @@ begin
 
         -- signals to IPBus
         -- CHANGEME - move to separate ADC and IPBus clocks
-        clk_i => ipb_clk,
+        clk_i => clk_1x,
         --clk_i => clk_1x,
         --ipb_clk => ipb_clk,
         reset_i  => rst,
@@ -366,6 +367,7 @@ begin
         control_ipbus_i  => ipbw( (2*iMaroc) + N_SLV_ADC0CTRL),
         control_ipbus_o  => ipbr( (2*iMaroc) + N_SLV_ADC0CTRL),
 
+        ipbus_clk_i      => ipb_clk,
         data_ipbus_i     => ipbw( (2*iMaroc) + N_SLV_ADC0DATA),
         data_ipbus_o     => ipbr( (2*iMaroc) + N_SLV_ADC0DATA),
 

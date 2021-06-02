@@ -80,7 +80,7 @@ ENTITY fiveMarocTriggerGenerator IS
 --      conversion_counter_o : out    std_logic_vector( g_BUSWIDTH-1 downto 0); --! Number of ADC conversions since last reset. Wraps round at full scale.
       externalHdmiTrigger_a_i: in std_logic;  --! External trigger ( routed from HDMI connector). Async
       externalGpioTrigger_a_i: in std_logic;  --! External trigger ( routed from TTLU GPIO connector). Async
-      internalTrigger_i    : IN     std_logic;                      --! Internal trigger ( from IPBus slave). Sync with clk_sys_i, but assume async w.r.t. clk_8x_i 
+      internalTrigger_i    : IN     std_logic;                      --! Internal trigger ( from IPBus slave). Assume async w.r.t. clk_8x_i and lasting one or more cycles of clk_8x_i 
       triggerSourceSelect_i : IN    std_logic_vector(g_NTRIGGER_SOURCES-1 downto 0);   --! 7-bit mask to select which trigger inputs are active.
                                                                                     --! bit0 = internal , bit1 = external ,
                                                                                     --! bit2 = or1 , bit3 = or2
@@ -147,6 +147,9 @@ ARCHITECTURE rtl OF fiveMarocTriggerGenerator IS
   signal s_hold2_d3 : std_logic;  --! 
   -- signal s_preDelayHold_d1 : std_logic;
   
+  attribute mark_debug : string;
+  attribute mark_debug of s_adcConversionStart , s_hold2, s_trig , s_internalTrigger_d2 , triggerSourceSelect_i : signal is "true";
+ 
 BEGIN 
 
 

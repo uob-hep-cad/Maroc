@@ -69,6 +69,9 @@ architecture rtl of marocADCFSM is
   type t_state_type is (IDLE , RESETTING , WAIT_FOR_DAV_HIGH , WAIT_FOR_DAV_LOW );
   signal s_state , s_next_state : t_state_type := IDLE ;
   
+  attribute mark_debug : string;
+  attribute mark_debug of start_p_i, adc_dav_i, reset_sr_o , start_adc_n_o, status_o ,s_state , s_next_state: signal is "true";
+    
 --============================================================================
 -- architecture begin
 --============================================================================ 

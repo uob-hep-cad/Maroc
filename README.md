@@ -10,8 +10,8 @@ To build the firmware:
 ```
 mkdir work
 cd work
-curl -L https://github.com/ipbus/ipbb/archive/refs/tags/dev/2020g.tar.gz | tar xvz
-source ipbb-dev-2020g/env.sh 
+curl -L https://github.com/ipbus/ipbb/archive/refs/tags/dev/2021i.tar.gz | tar xvz
+source ipbb-dev-2021i/env.sh 
 ipbb init build
 cd build
 
@@ -26,6 +26,7 @@ cd proj/top_a35_pc043a
 ipbb vivado project
 ipbb vivado impl
 ipbb vivado bitfile
+ipbb vivado memcfg
 ipbb vivado package
 deactivate
 ```

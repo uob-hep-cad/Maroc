@@ -3,5 +3,7 @@
 setup build_settings_a35.tcl
 @vivado.mcsfile_options ="-size 64 -interface SPIx4"
 include enclustra_ax3_pm3_a35_pc043a.dep
-src -c components/pdts ../cfg/set_ftdi_voltage_pc053.tcl
+
+src -c components/pdts  -c enclustra:boards/enclustra_ax3_pm3/synth ../ucf/set_enclustra_ftdi_voltage_2v5.tcl
+
 include payload_pc043a.dep

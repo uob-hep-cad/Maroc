@@ -16,6 +16,15 @@ set_clock_groups -asynchronous -group [get_clocks -include_generated_clocks osc_
 set_property IOSTANDARD LVDS_25 [get_port { HDMI* }]
 set_property DIFF_TERM TRUE [get_port { HDMI* }]
 
+set_property IOSTANDARD LVCMOS25 [get_port { uid_scl uid_sda }]
+set_property SLEW SLOW [get_port { uid_scl uid_sda }]  
+set_property DRIVE 4 [get_port { uid_scl uid_sda }]
+
+set_property PACKAGE_PIN N17 [get_ports {uid_scl}]
+set_property PACKAGE_PIN P18 [get_ports {uid_sda}]
+
+false_path { uid_scl uid_sda } osc_clk
+
 # Why have these nets dissapeared??
 #set_false_path -through [get_pins clocks/rst ]
 #set_false_path -through [get_pins clocks/rsto_ipb ]

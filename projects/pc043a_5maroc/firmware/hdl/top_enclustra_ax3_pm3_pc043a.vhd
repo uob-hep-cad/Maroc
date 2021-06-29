@@ -66,12 +66,17 @@ entity top is port(
         --HDMI1_DATA_P: inout std_logic_vector(2 downto 0);
         --HDMI1_DATA_N: inout std_logic_vector(2 downto 0);
         HDMI1_SIGNALS_P : inout std_logic_vector(3 downto 0);
-        HDMI1_SIGNALS_N : inout std_logic_vector(3 downto 0)
+        HDMI1_SIGNALS_N : inout std_logic_vector(3 downto 0);
         
         -- GPIO header for debugging:
         -- GPIO_HDR_O: out STD_LOGIC_VECTOR(5 downto 0); -- CHANGEME - No GPIO on Enclustra
         -- GPIO_HDR_I: in STD_LOGIC_VECTOR(7 downto 6)   -- CHANGEME - No GPIO on Enclustra
+        
 
+		uid_scl: inout std_logic; -- I2C lines for PROM containing MAC address
+		uid_sda: inout std_logic;
+		FTDI_TXD : in   std_ulogic; -- UART send data on serial/USB chip
+    	FTDI_RXD : out  std_ulogic -- UART receive data on serial/USB chip
 
 	);
 
@@ -91,6 +96,8 @@ architecture rtl of top is
 	signal ipb_out: ipb_wbus;
 	signal ipb_in: ipb_rbus;
 	signal inf_leds: std_logic_vector(1 downto 0);
+
+	signal neo430_scl_o , neo430_sda_o : std_logic; 
 
     attribute keep : string;
     attribute keep of nuke : signal is "true"; -- Bodge to keep un-used net 
@@ -124,6 +131,12 @@ begin
 -- Infrastructure
 
 	infra: entity work.enclustra_ax3_pm3_infra
+		   generic map(
+	       USE_NEO430 => True, 
+	       UID_I2C_ADDR => x"50" ,-- location in I2C map of PROM holding MAC addr.
+	                                      -- 0x50 is the address of AT24C256
+	       FORCE_RARP => False                      
+	   )
 		port map(
 			osc_clk => osc_clk,
 			clk_ipb_o => clk_ipb,
@@ -139,17 +152,25 @@ begin
 			rgmii_rxd => rgmii_rxd,
 			rgmii_rx_ctl => rgmii_rx_ctl,
 			rgmii_rxc => rgmii_rxc,
-			mac_addr => mac_addr,
-			ip_addr => ip_addr,
+			uart_txd_o => FTDI_RXD, -- from NEO UART to host
+			uart_rxd_i => FTDI_TXD, -- from host to NEO UART
+			uid_scl_i => uid_scl,
+			uid_sda_i => uid_sda,
+			uid_scl_o => neo430_scl_o,
+			uid_sda_o => neo430_sda_o,
 			ipb_in => ipb_in,
 			ipb_out => ipb_out
 		);
 		
+	-- Tri-state I2C lines:
+	uid_sda <= '0'  when ((neo430_sda_o= '0')) else 'Z';
+	uid_scl <= '0'  when ((neo430_scl_o= '0')) else 'Z';
+
 	leds <= not ('0' & userled & inf_leds);
 	phy_rstn <= not phy_rst_e;
 		
-	mac_addr <= X"020ddba11640"; -- Careful here, arbitrary addresses do not always work
-	ip_addr <= X"c0a8c840"; -- 192.168.200.64
+	--mac_addr <= X"020ddba11640"; -- Careful here, arbitrary addresses do not always work
+	--ip_addr <= X"c0a8c840"; -- 192.168.200.64
 
 -- ipbus slaves live in the entity below, and can expose top-level ports
 -- The ipbus fabric is instantiated within.

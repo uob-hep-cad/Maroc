@@ -32,4 +32,4 @@ deactivate
 
 After performing the build sequence the FPGA bitfile, PROM programming file and IPBus address map should be contained in `work/build/proj/top_a35_pc043a/package/top_a35_pc043a_XXXXX_YYYY_ZZZZ.tgz` where `XXXX` is the name of the build machine, `YYYY` is the date and `ZZZZ` is the time.
 
-N.B. If you want to *modify* the code rather than just build the configuration files you probably want to use the repository URL that uses ssh shared keys ( git@github.com:DavidCussans/Maroc.git ) rather than the HTTP access
+N.B. If you want to *modify* the code rather than just build the configuration files you probably want to use the repository URL that uses ssh shared keys ( git@github.com:uob-hep-cad/Maroc.git ) rather than the HTTP access

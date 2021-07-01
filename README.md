@@ -16,8 +16,7 @@ ipbb init build
 cd build
 
 ipbb add git https://github.com/ipbus/ipbus-firmware.git -b v1.6
-ipbb add git git@github.com:ipbus-contrib/enclustra.git 
-ipbb add git https://github.com/stnolting/neo430.git -b 0x0408
+ipbb add git https://github.com/ipbus-contrib/enclustra.git
 ipbb add git git@github.com:DavidCussans/Maroc.git
 
 ipbb proj create vivado top_a35_pc043a Maroc:projects/pc043a_5maroc top_pc043a.dep 

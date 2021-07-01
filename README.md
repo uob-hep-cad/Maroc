@@ -17,7 +17,7 @@ cd build
 
 ipbb add git https://github.com/ipbus/ipbus-firmware.git -b v1.6
 ipbb add git https://github.com/ipbus-contrib/enclustra.git
-ipbb add git git@github.com:DavidCussans/Maroc.git
+ipbb add git https://github.com/uob-hep-cad/Maroc.git
 
 ipbb proj create vivado top_a35_pc043a Maroc:projects/pc043a_5maroc top_pc043a.dep 
 
@@ -31,3 +31,5 @@ deactivate
 ```
 
 After performing the build sequence the FPGA bitfile, PROM programming file and IPBus address map should be contained in `work/build/proj/top_a35_pc043a/package/top_a35_pc043a_XXXXX_YYYY_ZZZZ.tgz` where `XXXX` is the name of the build machine, `YYYY` is the date and `ZZZZ` is the time.
+
+N.B. If you want to *modify* the code rather than just build the configuration files you probably want to use the repository URL that uses ssh shared keys ( git@github.com:DavidCussans/Maroc.git ) rather than the HTTP access
